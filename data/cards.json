@@ -4,7 +4,7 @@
     "name": "Digital 140",
     "category": "Modern",
     "price": 55,
-    "minOrder": 100,
+    "minOrder": 200,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/1141.gif"]
@@ -14,7 +14,7 @@
     "name": "Vellum 106",
     "category": "Floral",
     "price": 48,
-    "minOrder": 100,
+    "minOrder": 200,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/gree.gif"]
@@ -24,7 +24,7 @@
     "name": "Vellum 105",
     "category": "Heritage",
     "price": 50,
-    "minOrder": 100,
+    "minOrder": 200,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/merrr.gif"]
@@ -34,7 +34,7 @@
     "name": "Vellum 104",
     "category": "Minimal",
     "price": 48,
-    "minOrder": 100,
+    "minOrder": 200,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/vio.gif"]
@@ -44,7 +44,7 @@
     "name": "Vellum 103",
     "category": "Heritage",
     "price": 45,
-    "minOrder": 100,
+    "minOrder": 200,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/GREY4.gif"]
