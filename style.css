@@ -1,6 +1,6 @@
 /* =============================================
    ALLURE - PREMIUM BESPOKE INVITATIONS
-   Complete Stylesheet
+   Complete Stylesheet with Featured Badge
    ============================================= */
 
 :root {
@@ -264,7 +264,7 @@ section {
     transition: transform 0.3s;
     border-radius: 8px;
     border: 1px solid #f0f0f0;
-    position: relative;
+    position: relative; /* helps with featured badge positioning */
 }
 
 .product-card:hover {
@@ -326,8 +326,7 @@ section {
     background: var(--primary-gold);
 }
 
-/* Updated product title – now used for product name (ID hidden) */
-.product-name {
+.product-id {
     font-family: var(--font-heading);
     font-size: 1.2rem;
     margin-bottom: 5px;
@@ -803,4 +802,11 @@ section {
     .hero-logo {
         width: 150px;
     }
+   
+   .product-starting-price {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    margin-top: 10px;
+}
 }
