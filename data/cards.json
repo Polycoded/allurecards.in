@@ -1,0 +1,128 @@
+[
+  {
+    "id": "DIGITAL 140",
+    "name": "Digital 140",
+    "category": "Modern",
+    "price": 55,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/1141.gif"]
+  },
+  {
+    "id": "VELLUM 106",
+    "name": "Vellum 106",
+    "category": "Floral",
+    "price": 48,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/gree.gif"]
+  },
+  {
+    "id": "VELLUM 105",
+    "name": "Vellum 105",
+    "category": "Heritage",
+    "price": 50,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/merrr.gif"]
+  },
+  {
+    "id": "VELLUM 104",
+    "name": "Vellum 104",
+    "category": "Minimal",
+    "price": 48,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/vio.gif"]
+  },
+  {
+    "id": "VELLUM 103",
+    "name": "Vellum 103",
+    "category": "Heritage",
+    "price": 45,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/GREY4.gif"]
+  },
+  {
+    "id": "VELLUM 102",
+    "name": "Vellum 102",
+    "category": "Floral",
+    "price": 47,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/blue3.gif"]
+  },
+  {
+    "id": "VELLUM 101",
+    "name": "Vellum 101",
+    "category": "Modern",
+    "price": 55,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/coffeee.gif"]
+  },
+  {
+    "id": "PASTEL 209",
+    "name": "Pastel 209",
+    "category": "Minimal",
+    "price": 50,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/PI-3.gif"]
+  },
+  {
+    "id": "PASTEL 208",
+    "name": "Pastel 208",
+    "category": "Floral",
+    "price": 50,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/LI-2.gif"]
+  },
+  {
+    "id": "PASTEL 207",
+    "name": "Pastel 207",
+    "category": "Heritage",
+    "price": 50,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/GR-2.gif"]
+  },
+  {
+    "id": "PASTEL 206",
+    "name": "Pastel 206",
+    "category": "Modern",
+    "price": 50,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/123.gif"]
+  },
+  {
+    "id": "PASTEL 205",
+    "name": "Pastel 205",
+    "category": "Minimal",
+    "price": 50,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/CREA-3.gif"]
+  },
+  {
+    "id": "PASTEL 204",
+    "name": "Pastel 204",
+    "category": "Floral",
+    "price": 50,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/GREY-2.gif"]
+  },
+  {
+    "id": "PASTEL 203",
+    "name": "Pastel 203",
+    "category": "Heritage",
+    "price": 50,
+    "featured": false,
+    "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
+    "images": ["assets/cards/PU-5.gif"]
+  }
+]
