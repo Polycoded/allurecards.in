@@ -107,7 +107,7 @@
         </svg>
     </a>
 
-    <!-- Modal unchanged (description will be set dynamically) -->
+    <!-- Quick View Modal – updated calculator block -->
     <div id="quick-view-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-modal" id="close-modal">×</button>
@@ -127,19 +127,20 @@
                         <p id="modal-desc-text">Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.</p>
                     </div>
 
+                    <!-- Updated calculator block – dynamic label & discount row -->
                     <div class="calculator-box">
                         <div class="input-group">
                             <label for="modal-qty">Number of Cards (Min 100):</label>
-                            <input type="number" id="modal-qty" min="100" step="100" value="100">
+                            <input type="number" id="modal-qty" min="100" step="1" value="100">
                         </div>
                         <div class="calc-summary">
                             <div class="summary-row">
                                 <span>Base Amount:</span>
                                 <span id="calc-base-total">Rs. 0</span>
                             </div>
-                            <div class="summary-row highlight-discount" id="discount-row">
-                                <span>Volume Discount (<span id="calc-discount-pct">0</span>%):</span>
-                                <span>- Rs. <span id="calc-discount-amt">0</span></span>
+                            <div class="summary-row highlight-discount" id="discount-row" style="display:none;">
+                                <span id="discount-label">Processing Fee:</span>
+                                <span><span id="calc-discount-amt">0</span></span>
                             </div>
                             <div class="divider-sm"></div>
                             <div class="summary-row total-row">
