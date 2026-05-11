@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Constants
     const whatsappNumber = "919526577999";
     const DEFAULT_DESCRIPTION = "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.";
+    const DEFAULT_MIN_ORDER = 100; // Default minimum order if not specified
     const ITEMS_PER_PAGE = 12;
 
     // DOM elements
@@ -31,14 +32,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalDescText = document.getElementById('modal-desc-text');
     const qtyInput = document.getElementById('modal-qty');
     const calcBaseTotal = document.getElementById('calc-base-total');
+    const discountRow = document.getElementById('discount-row');
+    const discountLabel = document.getElementById('discount-label');
     const calcDiscountPct = document.getElementById('calc-discount-pct');
     const calcDiscountAmt = document.getElementById('calc-discount-amt');
     const calcFinalTotal = document.getElementById('calc-final-total');
     const whatsappBtn = document.getElementById('modal-whatsapp-btn');
 
     // State
-    let allProducts = [];          // Full dataset from JSON
-    let filteredProducts = [];    // Products matching current filter (sorted featured first)
+    let allProducts = [];
+    let filteredProducts = [];
     let visibleCount = 0;
     let currentFilter = 'All';
 
@@ -50,10 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             allProducts = data.map(p => ({
                 ...p,
-                // Ensure images array exists and points to the right folder
                 images: (p.images && p.images.length > 0) ? p.images : ['assets/cards/placeholder.jpg'],
                 featured: p.featured || false,
-                description: p.description || DEFAULT_DESCRIPTION
+                description: p.description || DEFAULT_DESCRIPTION,
+                minOrder: p.minOrder || DEFAULT_MIN_ORDER // Use card-specific min order or default 100
             }));
 
             buildCategoryMenu();
@@ -67,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     // ---------------------------------------------------------------------
-    // 4. Build dynamic category cards (in the "Collections" section)
+    // 4. Build dynamic category cards
     // ---------------------------------------------------------------------
     function buildCategoryMenu() {
         const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
@@ -82,12 +85,10 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `).join('');
 
-        // Clicking a category card filters the shop and scrolls
         categoryGrid.addEventListener('click', (e) => {
             const card = e.target.closest('.category-card');
             if (!card) return;
             const cat = card.dataset.category;
-            // Activate corresponding filter button
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.filter === cat) btn.classList.add('active');
@@ -102,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------------------
     function buildFilterButtons() {
         const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
-        // Clear existing buttons except "All"
         filterContainer.querySelectorAll('.filter-btn:not([data-filter="All"])').forEach(btn => btn.remove());
 
         categories.forEach(cat => {
@@ -113,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
             filterContainer.appendChild(btn);
         });
 
-        // Add event listeners to all filter buttons (including "All")
         filterContainer.addEventListener('click', (e) => {
             const btn = e.target.closest('.filter-btn');
             if (!btn) return;
@@ -124,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 6. Apply filter & sorting (featured first), then render first batch
+    // 6. Apply filter & sorting
     // ---------------------------------------------------------------------
     function applyFilter(filterCat) {
         currentFilter = filterCat;
@@ -132,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ? [...allProducts]
             : allProducts.filter(p => p.category === filterCat);
 
-        // Sort: featured items first
         filteredProducts.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
         visibleCount = Math.min(ITEMS_PER_PAGE, filteredProducts.length);
@@ -149,28 +147,62 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 7. Create card HTML with optional featured badge
+    // 7. Create card HTML - HIDE product ID, SHOW price based on min order
     // ---------------------------------------------------------------------
     function createCardHTML(product) {
         const productJson = encodeURIComponent(JSON.stringify(product));
         const featuredBadge = product.featured ? '<span class="featured-badge">Featured</span>' : '';
+        
+        // Calculate price based on card's minimum order quantity
+        const displayQuantity = product.minOrder || DEFAULT_MIN_ORDER;
+        const priceForMinOrder = calculatePriceForQuantity(displayQuantity, product.price, product.minOrder);
+        
         return `
             <div class="product-card">
                 <div class="product-img-wrapper">
                     ${featuredBadge}
-                    <img src="${product.images[0]}" alt="${product.id}" loading="lazy">
+                    <img src="${product.images[0]}" alt="${product.name}" loading="lazy">
                     <div class="quick-view-overlay">
                         <button class="quick-view-btn" data-product="${productJson}">Quick View</button>
                     </div>
                 </div>
-                <h4 class="product-id">${product.id}</h4>
-                <p class="product-price">Rs. ${product.price} / card</p>
+                <h4 class="product-name">${product.name}</h4>
+                <p class="product-price">From Rs. ${priceForMinOrder.toLocaleString()} for ${displayQuantity} cards</p>
             </div>
         `;
     }
 
     // ---------------------------------------------------------------------
-    // 8. Show more items (batch loading)
+    // 8. Price calculation function based on your rules
+    // ---------------------------------------------------------------------
+    function calculatePriceForQuantity(quantity, unitPrice, minOrder) {
+        const actualMinOrder = minOrder || DEFAULT_MIN_ORDER;
+        
+        if (quantity < actualMinOrder) {
+            return null; // Below minimum order - shouldn't happen on card display
+        }
+        
+        let totalPrice;
+        
+        if (quantity >= 100 && quantity < 200) {
+            // n * price + 600
+            totalPrice = (quantity * unitPrice) + 600;
+        } else if (quantity >= 200 && quantity < 500) {
+            // n * price (no discount, no fee)
+            totalPrice = quantity * unitPrice;
+        } else if (quantity >= 500 && quantity < 1000) {
+            // 5% discount
+            totalPrice = quantity * unitPrice * 0.95;
+        } else if (quantity >= 1000) {
+            // 10% discount
+            totalPrice = quantity * unitPrice * 0.90;
+        }
+        
+        return Math.round(totalPrice);
+    }
+
+    // ---------------------------------------------------------------------
+    // 9. Show more items
     // ---------------------------------------------------------------------
     function showMoreItems() {
         const nextCount = Math.min(visibleCount + ITEMS_PER_PAGE, filteredProducts.length);
@@ -188,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 9. Quick View event delegation
+    // 10. Quick View event delegation
     // ---------------------------------------------------------------------
     productContainer.addEventListener('click', (e) => {
         const btn = e.target.closest('.quick-view-btn');
@@ -200,20 +232,25 @@ document.addEventListener("DOMContentLoaded", () => {
     showMoreBtn.addEventListener('click', showMoreItems);
 
     // ---------------------------------------------------------------------
-    // 10. Modal logic
+    // 11. Modal logic
     // ---------------------------------------------------------------------
     let currentUnitPrice = 0;
     let currentProductName = "";
     let currentProductCategory = "";
+    let currentProductId = "";
+    let currentMinOrder = DEFAULT_MIN_ORDER;
 
     function openProductModal(product) {
-        currentProductName = product.id;
+        currentProductName = product.name || product.id;
+        currentProductId = product.id;
         currentProductCategory = product.category;
-        modalTitle.textContent = product.name || product.id;
+        currentMinOrder = product.minOrder || DEFAULT_MIN_ORDER;
+        
+        // Show product ID in modal (as specified - don't change quick view)
+        modalTitle.textContent = product.id;
         modalCategoryLabel.textContent = `Allure ${product.category} Collection`;
         modalUnitPrice.textContent = `Rs. ${product.price} / card`;
 
-        // Set dynamic description
         modalDescText.textContent = product.description || DEFAULT_DESCRIPTION;
 
         // Main image
@@ -243,7 +280,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         currentUnitPrice = product.price;
-        qtyInput.value = 100;
+        
+        // Set quantity input with dynamic min order
+        qtyInput.min = currentMinOrder;
+        qtyInput.value = currentMinOrder;
+        
+        // Update the label to show the correct minimum
+        const minOrderLabel = document.querySelector('.input-group label[for="modal-qty"]');
+        if (minOrderLabel) {
+            minOrderLabel.textContent = `Number of Cards (Min ${currentMinOrder}):`;
+        }
+        
         calculateTotal();
 
         modal.classList.add('active');
@@ -251,48 +298,112 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 11. Discount calculator
+    // 12. Discount calculator with your specific rules
     // ---------------------------------------------------------------------
     function calculateTotal() {
         let qty = parseInt(qtyInput.value);
-        if (isNaN(qty) || qty < 100) qty = 100;
+        
+        if (isNaN(qty) || qty < currentMinOrder) {
+            qty = currentMinOrder;
+            qtyInput.value = currentMinOrder;
+        }
 
-        const baseTotal = qty * currentUnitPrice;
-
+        let baseTotal = qty * currentUnitPrice;
+        let processingFee = 0;
         let discountPercent = 0;
-        if (qty >= 600) discountPercent = 25;
-        else if (qty >= 500) discountPercent = 20;
-        else if (qty >= 400) discountPercent = 15;
-        else if (qty >= 300) discountPercent = 10;
-        else if (qty >= 200) discountPercent = 5;
+        let discountAmount = 0;
+        let showDiscountRow = true;
+        let rowLabel = '';
 
-        const discountAmount = Math.round(baseTotal * (discountPercent / 100));
-        const finalTotal = baseTotal - discountAmount;
+        // Your pricing rules
+        if (qty < currentMinOrder) {
+            // Below minimum order - show error state
+            showDiscountRow = true;
+            rowLabel = 'Below Minimum Order';
+            discountAmount = 0;
+            finalTotal = 0;
+        } else if (qty >= 100 && qty < 200) {
+            // n * price + 600
+            processingFee = 600;
+            rowLabel = 'Processing Fee:';
+        } else if (qty >= 200 && qty < 500) {
+            // n * price (no discount, no fee)
+            showDiscountRow = false;
+        } else if (qty >= 500 && qty < 1000) {
+            // 5% discount
+            discountPercent = 5;
+            discountAmount = Math.round(baseTotal * 0.05);
+            rowLabel = `Volume Discount (${discountPercent}%):`;
+        } else if (qty >= 1000) {
+            // 10% discount
+            discountPercent = 10;
+            discountAmount = Math.round(baseTotal * 0.10);
+            rowLabel = `Volume Discount (${discountPercent}%):`;
+        }
 
+        const finalTotal = baseTotal + processingFee - discountAmount;
+
+        // Update UI
         calcBaseTotal.textContent = `Rs. ${baseTotal.toLocaleString()}`;
-        calcDiscountPct.textContent = discountPercent;
-        calcDiscountAmt.textContent = discountAmount.toLocaleString();
-        calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
+        
+        if (showDiscountRow) {
+            discountRow.style.display = 'flex';
+            if (processingFee > 0) {
+                discountLabel.textContent = 'Processing Fee:';
+                calcDiscountPct.textContent = '';
+                calcDiscountAmt.textContent = `+ Rs. ${processingFee.toLocaleString()}`;
+            } else if (discountPercent > 0) {
+                discountLabel.textContent = `Volume Discount (${discountPercent}%):`;
+                calcDiscountPct.textContent = '';
+                calcDiscountAmt.textContent = `- Rs. ${discountAmount.toLocaleString()}`;
+            } else {
+                discountLabel.textContent = rowLabel;
+                calcDiscountPct.textContent = '';
+                calcDiscountAmt.textContent = 'Contact for quote';
+            }
+        } else {
+            discountRow.style.display = 'none';
+        }
+        
+        calcFinalTotal.textContent = qty < currentMinOrder ? 'Below Minimum Order' : `Rs. ${finalTotal.toLocaleString()}`;
 
-        const message = `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
-                        `*Design:* ${currentProductName} (${currentProductCategory} Collection)\n` +
-                        `*Quantity:* ${qty}\n` +
-                        `*Unit Price:* Rs. ${currentUnitPrice}\n` +
-                        `*Estimated Total:* Rs. ${finalTotal.toLocaleString()} (Includes ${discountPercent}% volume discount)\n\n` +
-                        `Please let me know how to proceed.`;
-        whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        // Update WhatsApp message
+        if (qty >= currentMinOrder) {
+            let messageDetails = '';
+            if (processingFee > 0) {
+                messageDetails = `*Quantity:* ${qty}\n` +
+                               `*Unit Price:* Rs. ${currentUnitPrice}\n` +
+                               `*Processing Fee:* Rs. ${processingFee}\n` +
+                               `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}\n\n`;
+            } else if (discountPercent > 0) {
+                messageDetails = `*Quantity:* ${qty}\n` +
+                               `*Unit Price:* Rs. ${currentUnitPrice}\n` +
+                               `*Volume Discount:* ${discountPercent}%\n` +
+                               `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}\n\n`;
+            } else {
+                messageDetails = `*Quantity:* ${qty}\n` +
+                               `*Unit Price:* Rs. ${currentUnitPrice}\n` +
+                               `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}\n\n`;
+            }
+
+            const message = `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
+                            `*Design:* ${currentProductId} (${currentProductCategory} Collection)\n` +
+                            messageDetails +
+                            `Please let me know how to proceed.`;
+            whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        }
     }
 
     qtyInput.addEventListener('input', calculateTotal);
     qtyInput.addEventListener('change', () => {
-        if (parseInt(qtyInput.value) < 100) {
-            qtyInput.value = 100;
+        if (parseInt(qtyInput.value) < currentMinOrder) {
+            qtyInput.value = currentMinOrder;
             calculateTotal();
         }
     });
 
     // ---------------------------------------------------------------------
-    // 12. Close modal
+    // 13. Close modal
     // ---------------------------------------------------------------------
     closeModalBtn.addEventListener('click', () => {
         modal.classList.remove('active');
@@ -307,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------------------
-    // 13. Footer year
+    // 14. Footer year
     // ---------------------------------------------------------------------
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
