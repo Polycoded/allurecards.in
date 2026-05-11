@@ -4,6 +4,7 @@
     "name": "Digital 140",
     "category": "Modern",
     "price": 55,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/1141.gif"]
@@ -13,6 +14,7 @@
     "name": "Vellum 106",
     "category": "Floral",
     "price": 48,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/gree.gif"]
@@ -22,6 +24,7 @@
     "name": "Vellum 105",
     "category": "Heritage",
     "price": 50,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/merrr.gif"]
@@ -31,6 +34,7 @@
     "name": "Vellum 104",
     "category": "Minimal",
     "price": 48,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/vio.gif"]
@@ -40,6 +44,7 @@
     "name": "Vellum 103",
     "category": "Heritage",
     "price": 45,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/GREY4.gif"]
@@ -49,6 +54,7 @@
     "name": "Vellum 102",
     "category": "Floral",
     "price": 47,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/blue3.gif"]
@@ -58,6 +64,7 @@
     "name": "Vellum 101",
     "category": "Modern",
     "price": 55,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/coffeee.gif"]
@@ -67,6 +74,7 @@
     "name": "Pastel 209",
     "category": "Minimal",
     "price": 50,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/PI-3.gif"]
@@ -76,6 +84,7 @@
     "name": "Pastel 208",
     "category": "Floral",
     "price": 50,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/LI-2.gif"]
@@ -85,6 +94,7 @@
     "name": "Pastel 207",
     "category": "Heritage",
     "price": 50,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/GR-2.gif"]
@@ -94,6 +104,7 @@
     "name": "Pastel 206",
     "category": "Modern",
     "price": 50,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/123.gif"]
@@ -103,6 +114,7 @@
     "name": "Pastel 205",
     "category": "Minimal",
     "price": 50,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/CREA-3.gif"]
@@ -112,6 +124,7 @@
     "name": "Pastel 204",
     "category": "Floral",
     "price": 50,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/GREY-2.gif"]
@@ -121,6 +134,7 @@
     "name": "Pastel 203",
     "category": "Heritage",
     "price": 50,
+    "minOrder": 100,
     "featured": false,
     "description": "Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.",
     "images": ["assets/cards/PU-5.gif"]
