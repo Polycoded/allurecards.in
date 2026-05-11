@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterContainer = document.getElementById('filter-container');
     const categoryGrid = document.getElementById('category-grid');
 
-    // Modal elements (unchanged)
+    // Modal elements
     const modal = document.getElementById('quick-view-modal');
     const closeModalBtn = document.getElementById('close-modal');
     const modalImg = document.getElementById('modal-main-img');
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     // ---------------------------------------------------------------------
-    // 4. Pricing helper – currently used only for the portfolio card
+    // 4. Pricing helper (volume tiers)
     // ---------------------------------------------------------------------
     function calculateTotalForQuantity(n, unitPrice) {
         let total;
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (n >= 1000) {
             total = n * unitPrice * 0.90;
         } else {
-            total = n * unitPrice + 600;
+            total = n * unitPrice + 600; // fallback
         }
         return Math.round(total);
     }
@@ -163,13 +163,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 8. Portfolio card – ONLY the 100‑card total (+600), no ID, no unit price
+    // 8. Portfolio card (only 100‑card total, no ID, no per‑card price)
     // ---------------------------------------------------------------------
     function createCardHTML(product) {
         const productJson = encodeURIComponent(JSON.stringify(product));
         const featuredBadge = product.featured ? '<span class="featured-badge">Featured</span>' : '';
 
-        // **Always calculate for exactly 100 cards, including ₹600 surcharge**
         const totalFor100 = 100 * product.price + 600;
         const priceLabel = `Rs. ${totalFor100.toLocaleString()} for 100 cards`;
 
@@ -206,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 10. Quick View event delegation (unchanged)
+    // 10. Quick View event delegation
     // ---------------------------------------------------------------------
     productContainer.addEventListener('click', (e) => {
         const btn = e.target.closest('.quick-view-btn');
@@ -218,18 +217,25 @@ document.addEventListener("DOMContentLoaded", () => {
     showMoreBtn.addEventListener('click', showMoreItems);
 
     // ---------------------------------------------------------------------
-    // 11. Modal logic (untouched – still shows per‑card price)
+    // 11. Modal logic (NO per‑card price shown anywhere)
     // ---------------------------------------------------------------------
     let currentUnitPrice = 0;
     let currentProductName = "";
     let currentProductCategory = "";
+    let currentMinOrder = 100;
 
     function openProductModal(product) {
         currentProductName = product.id;
         currentProductCategory = product.category;
+        currentUnitPrice = product.price;
+        currentMinOrder = product.minOrder || 100;
+
         modalTitle.textContent = product.name || product.id;
         modalCategoryLabel.textContent = `Allure ${product.category} Collection`;
-        modalUnitPrice.textContent = `Rs. ${product.price} / card`;   // intentionally kept
+
+        // ❌ Hide any per‑card price
+        modalUnitPrice.style.display = 'none';   // completely remove from view
+        modalUnitPrice.textContent = '';          // safety
 
         modalDescText.textContent = product.description || DEFAULT_DESCRIPTION;
 
@@ -257,51 +263,46 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        currentUnitPrice = product.price;
-        qtyInput.value = 100;
-        calculateTotal();
+        // Set quantity input to minimum order
+        qtyInput.value = currentMinOrder;
+        qtyInput.min = currentMinOrder;
+        calculateTotal();           // update the modal total (no per‑card price)
 
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
 
     // ---------------------------------------------------------------------
-    // 12. Discount calculator (unchanged)
+    // 12. Calculator – only final total, no breakdown revealing unit price
     // ---------------------------------------------------------------------
     function calculateTotal() {
         let qty = parseInt(qtyInput.value);
-        if (isNaN(qty) || qty < 100) qty = 100;
+        if (isNaN(qty) || qty < currentMinOrder) qty = currentMinOrder;
 
-        const baseTotal = qty * currentUnitPrice;
+        // Compute final total using the tier rules (never reveals unit price)
+        const total = calculateTotalForQuantity(qty, currentUnitPrice);
 
-        let discountPercent = 0;
-        if (qty >= 600) discountPercent = 25;
-        else if (qty >= 500) discountPercent = 20;
-        else if (qty >= 400) discountPercent = 15;
-        else if (qty >= 300) discountPercent = 10;
-        else if (qty >= 200) discountPercent = 5;
+        // Hide the base‑amount and discount rows so nothing leaks the per‑card cost
+        document.querySelector('.calc-summary .summary-row:nth-child(1)').style.display = 'none'; // base amount row
+        document.getElementById('discount-row').style.display = 'none';
+        document.querySelector('.calc-summary .divider-sm').style.display = 'none';
 
-        const discountAmount = Math.round(baseTotal * (discountPercent / 100));
-        const finalTotal = baseTotal - discountAmount;
+        // Only show the final total
+        calcFinalTotal.textContent = `Rs. ${total.toLocaleString()}`;
 
-        calcBaseTotal.textContent = `Rs. ${baseTotal.toLocaleString()}`;
-        calcDiscountPct.textContent = discountPercent;
-        calcDiscountAmt.textContent = discountAmount.toLocaleString();
-        calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
-
+        // WhatsApp message – no unit price
         const message = `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
                         `*Design:* ${currentProductName} (${currentProductCategory} Collection)\n` +
                         `*Quantity:* ${qty}\n` +
-                        `*Unit Price:* Rs. ${currentUnitPrice}\n` +
-                        `*Estimated Total:* Rs. ${finalTotal.toLocaleString()} (Includes ${discountPercent}% volume discount)\n\n` +
+                        `*Estimated Total:* Rs. ${total.toLocaleString()}\n\n` +
                         `Please let me know how to proceed.`;
         whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     }
 
     qtyInput.addEventListener('input', calculateTotal);
     qtyInput.addEventListener('change', () => {
-        if (parseInt(qtyInput.value) < 100) {
-            qtyInput.value = 100;
+        if (parseInt(qtyInput.value) < currentMinOrder) {
+            qtyInput.value = currentMinOrder;
             calculateTotal();
         }
     });
@@ -312,12 +313,21 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModalBtn.addEventListener('click', () => {
         modal.classList.remove('active');
         document.body.style.overflow = 'auto';
+        // Restore the hidden rows so they appear normal next time modal opens
+        const summaryRows = document.querySelectorAll('.calc-summary .summary-row');
+        if (summaryRows.length > 0) summaryRows[0].style.display = '';
+        document.getElementById('discount-row').style.display = '';
+        document.querySelector('.calc-summary .divider-sm').style.display = '';
     });
 
     window.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
+            const summaryRows = document.querySelectorAll('.calc-summary .summary-row');
+            if (summaryRows.length > 0) summaryRows[0].style.display = '';
+            document.getElementById('discount-row').style.display = '';
+            document.querySelector('.calc-summary .divider-sm').style.display = '';
         }
     });
 
@@ -325,5 +335,4 @@ document.addEventListener("DOMContentLoaded", () => {
     // 14. Footer year
     // ---------------------------------------------------------------------
     document.getElementById('currentYear').textContent = new Date().getFullYear();
-
 });
