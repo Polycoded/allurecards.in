@@ -898,3 +898,115 @@ section {
     color: var(--primary-gold);
     font-weight: 600;
 }
+/* ---------- Discount banner (moved below dropdown) ---------- */
+.discount-banner {
+    font-size: 0.68rem;
+    color: var(--primary-gold);
+    opacity: 0.8;
+    margin-top: 8px;
+    margin-bottom: 0;
+    text-align: center;
+    letter-spacing: 0.3px;
+    line-height: 1.4;
+}
+
+/* ---------- Full‑screen image viewer (lightbox) ---------- */
+.gallery-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.92);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.gallery-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.gallery-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 2.5rem;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+}
+
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 20px;
+    z-index: 10;
+    transition: opacity 0.2s;
+    opacity: 0.7;
+}
+
+.gallery-nav:hover {
+    opacity: 1;
+}
+
+.gallery-prev {
+    left: 20px;
+}
+
+.gallery-next {
+    right: 20px;
+}
+
+.gallery-counter {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    opacity: 0.8;
+    letter-spacing: 1px;
+}
+
+.gallery-overlay img {
+    max-width: 90%;
+    max-height: 85vh;
+    object-fit: contain;
+    cursor: default;
+}
+
+/* Printing waived styling (already present, untouched) */
+#printing-row .waived {
+    color: #2e7d32;
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+#printing-row .saved-text {
+    font-size: 0.75rem;
+    color: #2e7d32;
+    margin-left: 6px;
+    font-weight: 500;
+}
+
+/* Savings row */
+.highlight-save {
+    color: var(--primary-gold);
+    font-weight: 600;
+}
