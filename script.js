@@ -30,13 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalCategoryLabel = document.getElementById('modal-category-label');
     const modalDescText = document.getElementById('modal-desc-text');
 
-    // NEW calculator elements
+    // Calculator elements (new)
     const qtySelect = document.getElementById('modal-qty-select');
     const calcCardCost = document.getElementById('calc-card-cost');
     const calcPrintingVal = document.getElementById('calc-printing-val');
     const printingRow = document.getElementById('printing-row');
-    const calcDiscountVal = document.getElementById('calc-discount-val');
     const discountRow = document.getElementById('discount-row');
+    const calcDiscountVal = document.getElementById('calc-discount-val');
+    const savingsRow = document.getElementById('savings-row');
     const calcSavingsVal = document.getElementById('calc-savings-val');
     const calcFinalTotal = document.getElementById('calc-final-total');
     const whatsappBtn = document.getElementById('modal-whatsapp-btn');
@@ -200,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showMoreBtn.addEventListener('click', showMoreItems);
 
     // ---------------------------------------------------------------------
-    // 10. MODAL – DROPDOWN, TRANSPARENT PRICING WITH SAVINGS EMPHASIS
+    // 10. MODAL – CLEAN, TRANSPARENT, SAVINGS‑FOCUSED
     // ---------------------------------------------------------------------
     let currentUnitPrice = 0;
     let currentProductName = "";
@@ -245,10 +246,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Populate dropdown from minOrder to 1500, step 50
+        // Populate dropdown
         populateQtyDropdown(currentMinOrder);
 
-        // Bind change event
+        // Bind change event and compute
         qtySelect.removeEventListener('change', calculateTotal);
         qtySelect.addEventListener('change', calculateTotal);
         calculateTotal();
@@ -274,9 +275,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Printing charge
         const printingCharge = qty < 200 ? 600 : 0;
-        const printingWaived = printingCharge === 0 ? 600 : 0; // how much they saved on printing
+        const printingWaived = printingCharge === 0 ? 600 : 0; // savings from printing
 
-        // Volume discount
+        // Volume discount (single, not stacked)
         let factor = 1.0;
         let discountPercent = 0;
         if (qty >= 1000) {
@@ -291,43 +292,37 @@ document.addEventListener("DOMContentLoaded", () => {
         // Final total
         const finalTotal = Math.round(cardCost * factor) + printingCharge;
 
-        // Total savings (printing waived + discount)
+        // Total savings for display
         const totalSavings = printingWaived + discountAmount;
 
-        // ---- UI UPDATES ----
+        // ---- Update DOM ----
 
         // Card cost
         calcCardCost.textContent = `Rs. ${cardCost.toLocaleString()}`;
 
-        // Printing row
-        const printingSpan = calcPrintingVal;
+        // Printing charge row
         if (printingCharge > 0) {
-            printingSpan.innerHTML = `Rs. 600`;
-            printingSpan.classList.remove('waived');
-            // remove any saved note
-            const savedNote = printingRow.querySelector('.saved-text');
-            if (savedNote) savedNote.remove();
+            calcPrintingVal.innerHTML = `Rs. 600`;
+            // Remove any FREE note
         } else {
-            printingSpan.innerHTML = `<span class="waived">Rs. 600</span> <span class="saved-text">FREE</span>`;
+            calcPrintingVal.innerHTML = `<span class="waived">Rs. 600</span> <span class="saved-text">FREE</span>`;
         }
 
-        // Discount row
-        discountRow.style.display = 'flex';
+        // Volume discount row (only show when actual discount applies)
         if (discountPercent > 0) {
+            discountRow.style.display = 'flex';
             calcDiscountVal.innerHTML = `− Rs. ${discountAmount.toLocaleString()} (${discountPercent}% off)`;
             calcDiscountVal.style.color = '#2e7d32';
         } else {
-            // Show hint to encourage larger orders
-            calcDiscountVal.innerHTML = `<span style="color:var(--text-light); font-size:0.8rem;">5% off on 500+ &nbsp;·&nbsp; 10% off on 1000+</span>`;
+            discountRow.style.display = 'none';
         }
 
-        // Savings row
+        // You Save row (show only if savings exist)
         if (totalSavings > 0) {
+            savingsRow.style.display = 'flex';
             calcSavingsVal.textContent = `Rs. ${totalSavings.toLocaleString()}`;
-            document.getElementById('savings-row').style.opacity = '1';
         } else {
-            calcSavingsVal.textContent = '—';
-            document.getElementById('savings-row').style.opacity = '0.5';
+            savingsRow.style.display = 'none';
         }
 
         // Final total
@@ -361,4 +356,5 @@ document.addEventListener("DOMContentLoaded", () => {
     // 12. Footer year
     // ---------------------------------------------------------------------
     document.getElementById('currentYear').textContent = new Date().getFullYear();
+
 });
