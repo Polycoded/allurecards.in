@@ -863,3 +863,38 @@ section {
     color: #2e7d32;
     margin-left: 6px;
 }
+/* Subtle inline hint next to the dropdown */
+.info-hint {
+    font-size: 0.65rem;
+    color: var(--primary-gold);
+    opacity: 0.75;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    margin-left: 2px;
+    display: inline-block;
+}
+
+/* Printing waived styling */
+#printing-row .waived {
+    color: #2e7d32;
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+#printing-row .saved-text {
+    font-size: 0.75rem;
+    color: #2e7d32;
+    margin-left: 6px;
+    font-weight: 500;
+}
+
+/* Volume discount row (already present) */
+.highlight-discount {
+    color: #2e7d32;
+}
+
+/* You save row */
+.highlight-save {
+    color: var(--primary-gold);
+    font-weight: 600;
+}
