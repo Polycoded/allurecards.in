@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalCategoryLabel = document.getElementById('modal-category-label');
     const modalDescText = document.getElementById('modal-desc-text');
 
-    // Calculator elements (new)
+    // Calculator elements
     const qtySelect = document.getElementById('modal-qty-select');
     const calcCardCost = document.getElementById('calc-card-cost');
     const calcPrintingVal = document.getElementById('calc-printing-val');
@@ -41,6 +41,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const calcSavingsVal = document.getElementById('calc-savings-val');
     const calcFinalTotal = document.getElementById('calc-final-total');
     const whatsappBtn = document.getElementById('modal-whatsapp-btn');
+
+    // Full‑screen gallery elements
+    const galleryOverlay = document.getElementById('gallery-overlay');
+    const galleryImg = document.getElementById('gallery-img');
+    const galleryClose = document.getElementById('gallery-close');
+    const galleryPrev = document.getElementById('gallery-prev');
+    const galleryNext = document.getElementById('gallery-next');
+    const galleryCounter = document.getElementById('gallery-counter');
+
+    // Gallery state
+    let currentImages = [];
+    let currentGalleryIndex = 0;
 
     // State
     let allProducts = [];
@@ -201,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showMoreBtn.addEventListener('click', showMoreItems);
 
     // ---------------------------------------------------------------------
-    // 10. MODAL – CLEAN, TRANSPARENT, SAVINGS‑FOCUSED
+    // 10. MODAL – Clean discount banner + full‑screen lightbox
     // ---------------------------------------------------------------------
     let currentUnitPrice = 0;
     let currentProductName = "";
@@ -214,20 +226,22 @@ document.addEventListener("DOMContentLoaded", () => {
         currentUnitPrice = product.price;
         currentMinOrder = product.minOrder || 100;
 
+        // Store images for lightbox
+        currentImages = product.images || [];
+
         modalTitle.textContent = product.name || product.id;
         modalCategoryLabel.textContent = `Allure ${product.category} Collection`;
         modalUnitPrice.textContent = `Rs. ${product.price} / card`;
-
         modalDescText.textContent = product.description || DEFAULT_DESCRIPTION;
 
         // Main image
-        modalImg.src = product.images[0];
+        modalImg.src = currentImages[0];
         modalImg.alt = product.name || product.id;
 
         // Thumbnails
         thumbnailContainer.innerHTML = '';
-        if (product.images.length > 1) {
-            product.images.forEach((imgSrc, index) => {
+        if (currentImages.length > 1) {
+            currentImages.forEach((imgSrc, index) => {
                 const thumbDiv = document.createElement('div');
                 thumbDiv.className = `thumb ${index === 0 ? 'active' : ''}`;
                 thumbDiv.innerHTML = `<img src="${imgSrc}" alt="Thumbnail ${index + 1}">`;
@@ -249,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Populate dropdown
         populateQtyDropdown(currentMinOrder);
 
-        // Bind change event and compute
+        // Bind change event
         qtySelect.removeEventListener('change', calculateTotal);
         qtySelect.addEventListener('change', calculateTotal);
         calculateTotal();
@@ -273,11 +287,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const qty = parseInt(qtySelect.value, 10);
         const cardCost = qty * currentUnitPrice;
 
-        // Printing charge
         const printingCharge = qty < 200 ? 600 : 0;
-        const printingWaived = printingCharge === 0 ? 600 : 0; // savings from printing
+        const printingWaived = printingCharge === 0 ? 600 : 0;
 
-        // Volume discount (single, not stacked)
         let factor = 1.0;
         let discountPercent = 0;
         if (qty >= 1000) {
@@ -288,27 +300,18 @@ document.addEventListener("DOMContentLoaded", () => {
             discountPercent = 5;
         }
         const discountAmount = Math.round(cardCost * (1 - factor));
-
-        // Final total
         const finalTotal = Math.round(cardCost * factor) + printingCharge;
-
-        // Total savings for display
         const totalSavings = printingWaived + discountAmount;
 
-        // ---- Update DOM ----
-
-        // Card cost
+        // Update DOM
         calcCardCost.textContent = `Rs. ${cardCost.toLocaleString()}`;
 
-        // Printing charge row
         if (printingCharge > 0) {
             calcPrintingVal.innerHTML = `Rs. 600`;
-            // Remove any FREE note
         } else {
             calcPrintingVal.innerHTML = `<span class="waived">Rs. 600</span> <span class="saved-text">FREE</span>`;
         }
 
-        // Volume discount row (only show when actual discount applies)
         if (discountPercent > 0) {
             discountRow.style.display = 'flex';
             calcDiscountVal.innerHTML = `− Rs. ${discountAmount.toLocaleString()} (${discountPercent}% off)`;
@@ -317,7 +320,6 @@ document.addEventListener("DOMContentLoaded", () => {
             discountRow.style.display = 'none';
         }
 
-        // You Save row (show only if savings exist)
         if (totalSavings > 0) {
             savingsRow.style.display = 'flex';
             calcSavingsVal.textContent = `Rs. ${totalSavings.toLocaleString()}`;
@@ -325,10 +327,8 @@ document.addEventListener("DOMContentLoaded", () => {
             savingsRow.style.display = 'none';
         }
 
-        // Final total
         calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
 
-        // WhatsApp message (no unit price)
         const message = `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
                         `*Design:* ${currentProductName} (${currentProductCategory} Collection)\n` +
                         `*Quantity:* ${qty}\n` +
@@ -338,7 +338,80 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 11. Close modal
+    // 11. LIGHTBOX – Full screen image viewer with arrow navigation
+    // ---------------------------------------------------------------------
+    // Click on main image in modal opens the lightbox
+    modalImg.addEventListener('click', (e) => {
+        if (currentImages.length === 0) return;
+        // Start at the currently displayed image (match src)
+        const src = modalImg.getAttribute('src');
+        const idx = currentImages.indexOf(src);
+        openGallery(idx >= 0 ? idx : 0);
+    });
+
+    function openGallery(index) {
+        if (currentImages.length === 0) return;
+        currentGalleryIndex = index;
+        updateGalleryImage();
+        galleryOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function updateGalleryImage() {
+        galleryImg.src = currentImages[currentGalleryIndex];
+        if (currentImages.length > 1) {
+            galleryCounter.textContent = `${currentGalleryIndex + 1} / ${currentImages.length}`;
+            galleryPrev.style.display = 'block';
+            galleryNext.style.display = 'block';
+        } else {
+            galleryCounter.textContent = '';
+            galleryPrev.style.display = 'none';
+            galleryNext.style.display = 'none';
+        }
+    }
+
+    function closeGallery() {
+        galleryOverlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    galleryClose.addEventListener('click', closeGallery);
+    galleryOverlay.addEventListener('click', (e) => {
+        if (e.target === galleryOverlay) closeGallery();
+    });
+
+    galleryPrev.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentImages.length > 0) {
+            currentGalleryIndex = (currentGalleryIndex - 1 + currentImages.length) % currentImages.length;
+            updateGalleryImage();
+        }
+    });
+
+    galleryNext.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentImages.length > 0) {
+            currentGalleryIndex = (currentGalleryIndex + 1) % currentImages.length;
+            updateGalleryImage();
+        }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (!galleryOverlay.classList.contains('active')) return;
+        if (e.key === 'Escape') closeGallery();
+        if (e.key === 'ArrowLeft') {
+            currentGalleryIndex = (currentGalleryIndex - 1 + currentImages.length) % currentImages.length;
+            updateGalleryImage();
+        }
+        if (e.key === 'ArrowRight') {
+            currentGalleryIndex = (currentGalleryIndex + 1) % currentImages.length;
+            updateGalleryImage();
+        }
+    });
+
+    // ---------------------------------------------------------------------
+    // 12. Close modal (includes resetting body scroll)
     // ---------------------------------------------------------------------
     closeModalBtn.addEventListener('click', () => {
         modal.classList.remove('active');
@@ -353,7 +426,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------------------
-    // 12. Footer year
+    // 13. Footer year
     // ---------------------------------------------------------------------
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
