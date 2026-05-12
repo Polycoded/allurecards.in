@@ -8,6 +8,7 @@
     --bg-color: #faf9f6;
     --text-dark: #2c2c2c;
     --text-light: #7a7a7a;
+    --discount-color: #2e7d32;
     --font-heading: 'Cinzel', serif;
     --font-body: 'Montserrat', sans-serif;
 }
@@ -24,6 +25,21 @@ body {
     background-color: var(--bg-color);
     color: var(--text-dark);
     line-height: 1.6;
+}
+
+/* ---------- Skip link (hidden by default, visible on focus) ---------- */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 10px;
+    background: var(--primary-gold);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    z-index: 10000;
+    transition: top 0.3s;
+}
+.skip-link:focus {
+    top: 10px;
 }
 
 /* ---------- Preloader ---------- */
@@ -261,15 +277,16 @@ section {
     background: #fff;
     padding: 20px;
     text-align: center;
-    transition: transform 0.3s;
     border-radius: 8px;
     border: 1px solid #f0f0f0;
-    position: relative; /* helps with featured badge positioning */
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
 }
 
 .product-img-wrapper {
@@ -621,6 +638,7 @@ section {
     gap: 15px;
     justify-content: center;
     width: 100%;
+    flex-wrap: wrap;
 }
 
 .thumb {
@@ -681,6 +699,7 @@ section {
     margin-bottom: 30px;
 }
 
+/* ---------- Quick View Calculator ---------- */
 .calculator-box {
     background: var(--bg-color);
     padding: 20px;
@@ -702,19 +721,37 @@ section {
     letter-spacing: 1px;
 }
 
-.input-group input {
+/* --- Select replaced by script.js; styling kept for fallback --- */
+.input-group select {
     width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
     font-family: var(--font-body);
     font-size: 1rem;
     outline: none;
-    transition: border 0.3s;
     border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='%237a7a7a'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
 }
 
-.input-group input:focus {
+.input-group select:focus {
     border-color: var(--primary-gold);
+}
+
+.discount-banner {
+    font-size: 0.68rem;
+    color: var(--primary-gold);
+    opacity: 0.8;
+    margin-top: 8px;
+    margin-bottom: 0;
+    text-align: center;
+    letter-spacing: 0.3px;
+    line-height: 1.4;
 }
 
 .calc-summary {
@@ -729,7 +766,7 @@ section {
 }
 
 .highlight-discount {
-    color: #2e7d32;
+    color: var(--discount-color); /* #2e7d32 */
 }
 
 .divider-sm {
@@ -752,162 +789,26 @@ section {
     border-radius: 4px;
 }
 
-/* ---------- Responsive Adjustments ---------- */
-@media (max-width: 900px) {
-    .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .modal-body {
-        flex-direction: column;
-    }
-
-    .modal-gallery {
-        padding: 20px;
-    }
-
-    .main-image-container {
-        height: 35vh;
-    }
-
-    .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        text-align: center;
-    }
-
-    .footer-map-container {
-        text-align: center;
-        align-items: center;
-    }
-
-    .footer-divider {
-        margin: 15px auto 20px;
-    }
-
-    .hero h1 {
-        font-size: 2.8rem;
-    }
-
-    .hero-logo {
-        width: 180px;
-    }
+/* ---------- Printing waived / savings ---------- */
+#printing-row .waived {
+    color: var(--discount-color);
+    text-decoration: line-through;
+    opacity: 0.6;
 }
 
-@media (max-width: 600px) {
-    .products-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .hero-logo {
-        width: 150px;
-    }
-   
-   .product-starting-price {
-    font-size: 0.95rem;
-    color: var(--text-dark);
+#printing-row .saved-text {
+    font-size: 0.75rem;
+    color: var(--discount-color);
+    margin-left: 6px;
     font-weight: 500;
-    margin-top: 10px;
-}
-}
-/* -- Quick View Select -- */
-.input-group select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    font-family: var(--font-body);
-    font-size: 1rem;
-    outline: none;
-    border-radius: 4px;
-    background: #fff;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='%237a7a7a'><path d='M7 10l5 5 5-5z'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 15px center;
-}
-
-.input-group select:focus {
-    border-color: var(--primary-gold);
-}
-/* ---------- Quick View Calculator Hints ---------- */
-.calc-hint {
-    font-size: 0.72rem;
-    color: var(--primary-gold);
-    text-align: center;
-    margin: -5px 0 15px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    opacity: 0.9;
 }
 
 .highlight-save {
     color: var(--primary-gold);
     font-weight: 600;
 }
-
 .highlight-save span:last-child {
     color: var(--primary-gold);
-}
-
-/* Animation for printing charge when waived */
-#printing-row .waived {
-    color: #2e7d32;
-    text-decoration: line-through;
-    opacity: 0.6;
-}
-
-#printing-row .saved-text {
-    font-size: 0.75rem;
-    color: #2e7d32;
-    margin-left: 6px;
-}
-/* Subtle inline hint next to the dropdown */
-.info-hint {
-    font-size: 0.65rem;
-    color: var(--primary-gold);
-    opacity: 0.75;
-    font-weight: 400;
-    letter-spacing: 0.3px;
-    margin-left: 2px;
-    display: inline-block;
-}
-
-/* Printing waived styling */
-#printing-row .waived {
-    color: #2e7d32;
-    text-decoration: line-through;
-    opacity: 0.6;
-}
-
-#printing-row .saved-text {
-    font-size: 0.75rem;
-    color: #2e7d32;
-    margin-left: 6px;
-    font-weight: 500;
-}
-
-/* Volume discount row (already present) */
-.highlight-discount {
-    color: #2e7d32;
-}
-
-/* You save row */
-.highlight-save {
-    color: var(--primary-gold);
-    font-weight: 600;
-}
-/* ---------- Discount banner (moved below dropdown) ---------- */
-.discount-banner {
-    font-size: 0.68rem;
-    color: var(--primary-gold);
-    opacity: 0.8;
-    margin-top: 8px;
-    margin-bottom: 0;
-    text-align: center;
-    letter-spacing: 0.3px;
-    line-height: 1.4;
 }
 
 /* ---------- Full‑screen image viewer (lightbox) ---------- */
@@ -991,22 +892,54 @@ section {
     cursor: default;
 }
 
-/* Printing waived styling (already present, untouched) */
-#printing-row .waived {
-    color: #2e7d32;
-    text-decoration: line-through;
-    opacity: 0.6;
+/* ---------- Responsive Adjustments ---------- */
+@media (max-width: 900px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .modal-body {
+        flex-direction: column;
+    }
+
+    .modal-gallery {
+        padding: 20px;
+    }
+
+    .main-image-container {
+        height: 35vh;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+
+    .footer-map-container {
+        text-align: center;
+        align-items: center;
+    }
+
+    .footer-divider {
+        margin: 15px auto 20px;
+    }
+
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+
+    .hero-logo {
+        width: 180px;
+    }
 }
 
-#printing-row .saved-text {
-    font-size: 0.75rem;
-    color: #2e7d32;
-    margin-left: 6px;
-    font-weight: 500;
-}
+@media (max-width: 600px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
 
-/* Savings row */
-.highlight-save {
-    color: var(--primary-gold);
-    font-weight: 600;
+    .hero-logo {
+        width: 150px;
+    }
 }
