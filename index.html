@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Allure | Cards by Impressions</title>
+    <title>Allure – Premium Bespoke Wedding Invitation Cards by Impressions</title>
+    <meta name="description" content="Allure by Impressions designs exquisite, handcrafted wedding invitation suites. Explore our premium bespoke collections in Thrissur, Kerala.">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Allure – Premium Bespoke Wedding Invitations">
+    <meta property="og:description" content="Timeless, meticulously curated invitation suites for your forever. Crafted by Impressions Wedding Cards.">
+    <meta property="og:image" content="allure_page-0003.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://allurecards.in">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="allure_page-0003.jpg">
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,13 +24,16 @@
 </head>
 <body>
 
+    <!-- Skip to content -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Preloader -->
-    <div id="preloader">
+    <div id="preloader" aria-hidden="true">
         <img src="allure_page-0003.jpg" alt="Allure Logo" class="preloader-logo">
     </div>
 
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="logo">
             <img src="allure_page-0003.jpg" alt="Allure by Impressions" class="brand-logo">
         </div>
@@ -29,46 +45,51 @@
         </ul>
     </nav>
 
-    <!-- Hero Section -->
-    <header id="home" class="hero">
-        <div class="hero-content">
-            <img src="allure_page-0003.jpg" alt="Allure" class="hero-logo">
-            <p class="subtitle">Premium Bespoke Invitations</p>
-            <h1>Designing the Allure of Your Forever</h1>
-            <p class="description">Every great love story deserves an unforgettable introduction. Craft the first impression of your marriage with our timeless, meticulously curated invitation suites.</p>
-            <a href="#shop" class="cta-btn">Explore the Collection</a>
-        </div>
-    </header>
+    <!-- Main Content -->
+    <main id="main-content">
 
-    <!-- Collections Section -->
-    <section id="collections" class="categories">
-        <div class="section-header">
-            <h2>Our Collections</h2>
-            <div class="divider"></div>
-        </div>
-        <div class="category-grid" id="category-grid">
-            <!-- Categories populated dynamically from script.js -->
-        </div>
-    </section>
+        <!-- Hero Section -->
+        <header id="home" class="hero">
+            <div class="hero-content">
+                <img src="allure_page-0003.jpg" alt="Allure" class="hero-logo">
+                <p class="subtitle">Premium Bespoke Invitations</p>
+                <h1>Designing the Allure of Your Forever</h1>
+                <p class="description">Every great love story deserves an unforgettable introduction. Craft the first impression of your marriage with our timeless, meticulously curated invitation suites.</p>
+                <a href="#shop" class="cta-btn">Explore the Collection</a>
+            </div>
+        </header>
 
-    <!-- Portfolio Section -->
-    <section id="shop" class="products-section">
-        <div class="section-header">
-            <h2>The Portfolio</h2>
-            <p>Hover to preview. Click for details. Each piece is a testament to craftsmanship.</p>
-            <div class="divider"></div>
-        </div>
+        <!-- Collections Section -->
+        <section id="collections" class="categories">
+            <div class="section-header">
+                <h2>Our Collections</h2>
+                <div class="divider"></div>
+            </div>
+            <div class="category-grid" id="category-grid">
+                <!-- Categories populated dynamically from script.js -->
+            </div>
+        </section>
 
-        <div class="filter-container" id="filter-container">
-            <button class="filter-btn active" data-filter="All">All Designs</button>
-        </div>
+        <!-- Portfolio Section -->
+        <section id="shop" class="products-section">
+            <div class="section-header">
+                <h2>The Portfolio</h2>
+                <p>Hover to preview. Click for details. Each piece is a testament to craftsmanship.</p>
+                <div class="divider"></div>
+            </div>
 
-        <div class="products-grid" id="product-container"></div>
+            <div class="filter-container" id="filter-container">
+                <button class="filter-btn active" data-filter="All">All Designs</button>
+            </div>
 
-        <div class="show-more-container">
-            <button id="show-more-btn" class="show-more-btn">Show More Designs</button>
-        </div>
-    </section>
+            <div class="products-grid" id="product-container"></div>
+
+            <div class="show-more-container">
+                <button id="show-more-btn" class="show-more-btn">Show More Designs</button>
+            </div>
+        </section>
+
+    </main>
 
     <!-- Footer Section -->
     <footer id="contact" class="footer" role="contentinfo">
@@ -114,9 +135,9 @@
     </a>
 
     <!-- Quick View Modal -->
-    <div id="quick-view-modal" class="modal-overlay">
+    <div id="quick-view-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content">
-            <button class="close-modal" id="close-modal">×</button>
+            <button class="close-modal" id="close-modal" aria-label="Close modal">×</button>
             <div class="modal-body">
                 <div class="modal-gallery">
                     <div class="main-image-container">
@@ -173,9 +194,9 @@
 
     <!-- Full‑screen image viewer (lightbox) -->
     <div id="gallery-overlay" class="gallery-overlay">
-        <button class="gallery-close" id="gallery-close">×</button>
-        <button class="gallery-nav gallery-prev" id="gallery-prev">‹</button>
-        <button class="gallery-nav gallery-next" id="gallery-next">›</button>
+        <button class="gallery-close" id="gallery-close" aria-label="Close full‑screen preview">×</button>
+        <button class="gallery-nav gallery-prev" id="gallery-prev" aria-label="Previous image">‹</button>
+        <button class="gallery-nav gallery-next" id="gallery-next" aria-label="Next image">›</button>
         <img id="gallery-img" src="" alt="Full screen preview">
         <p id="gallery-counter" class="gallery-counter"></p>
     </div>
