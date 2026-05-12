@@ -29,8 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalUnitPrice = document.getElementById('modal-unit-price');
     const modalCategoryLabel = document.getElementById('modal-category-label');
     const modalDescText = document.getElementById('modal-desc-text');
-    const qtyInput = document.getElementById('modal-qty');
-    const calcBaseTotal = document.getElementById('calc-base-total');
+
+    // NEW: select dropdown
+    const qtySelect = document.getElementById('modal-qty-select');
+    const calcCardCost = document.getElementById('calc-card-cost');
+    const printingRow = document.getElementById('printing-row');
+    const discountRow = document.getElementById('discount-row');
     const calcDiscountPct = document.getElementById('calc-discount-pct');
     const calcDiscountAmt = document.getElementById('calc-discount-amt');
     const calcFinalTotal = document.getElementById('calc-final-total');
@@ -43,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentFilter = 'All';
 
     // ---------------------------------------------------------------------
-    // 3. Fetch data and initialise
+    // 3. Fetch data and initialize
     // ---------------------------------------------------------------------
     fetch('./data/cards.json')
         .then(res => res.json())
@@ -52,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ...p,
                 images: (p.images && p.images.length > 0) ? p.images : ['assets/cards/placeholder.jpg'],
                 featured: p.featured || false,
-                minOrder: p.minOrder || 100,
+                minOrder: p.minOrder || 100,         // for dropdown start
                 description: p.description || DEFAULT_DESCRIPTION
             }));
 
@@ -67,26 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     // ---------------------------------------------------------------------
-    // 4. Pricing helper (volume tiers)
-    // ---------------------------------------------------------------------
-    function calculateTotalForQuantity(n, unitPrice) {
-        let total;
-        if (n >= 100 && n <= 199) {
-            total = n * unitPrice + 600;
-        } else if (n >= 200 && n <= 499) {
-            total = n * unitPrice;
-        } else if (n >= 500 && n <= 999) {
-            total = n * unitPrice * 0.95;
-        } else if (n >= 1000) {
-            total = n * unitPrice * 0.90;
-        } else {
-            total = n * unitPrice + 600; // fallback
-        }
-        return Math.round(total);
-    }
-
-    // ---------------------------------------------------------------------
-    // 5. Build category cards (Collections section)
+    // 4. Build category cards
     // ---------------------------------------------------------------------
     function buildCategoryMenu() {
         const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
@@ -115,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 6. Dynamic filter buttons
+    // 5. Dynamic filter buttons
     // ---------------------------------------------------------------------
     function buildFilterButtons() {
         const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
@@ -139,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 7. Apply filter & show first batch
+    // 6. Apply filter & render first batch
     // ---------------------------------------------------------------------
     function applyFilter(filterCat) {
         currentFilter = filterCat;
@@ -163,15 +148,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 8. Portfolio card (only 100‑card total, no ID, no per‑card price)
+    // 7. Create card HTML (unchanged – will still show ID and per‑card price)
     // ---------------------------------------------------------------------
     function createCardHTML(product) {
         const productJson = encodeURIComponent(JSON.stringify(product));
         const featuredBadge = product.featured ? '<span class="featured-badge">Featured</span>' : '';
-
-        const totalFor100 = 100 * product.price + 600;
-        const priceLabel = `Rs. ${totalFor100.toLocaleString()} for 100 cards`;
-
         return `
             <div class="product-card">
                 <div class="product-img-wrapper">
@@ -181,13 +162,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         <button class="quick-view-btn" data-product="${productJson}">Quick View</button>
                     </div>
                 </div>
-                <p class="product-starting-price">${priceLabel}</p>
+                <h4 class="product-id">${product.id}</h4>
+                <p class="product-price">Rs. ${product.price} / card</p>
             </div>
         `;
     }
 
     // ---------------------------------------------------------------------
-    // 9. Show more items
+    // 8. Show more items
     // ---------------------------------------------------------------------
     function showMoreItems() {
         const nextCount = Math.min(visibleCount + ITEMS_PER_PAGE, filteredProducts.length);
@@ -205,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 10. Quick View event delegation
+    // 9. Quick View event delegation
     // ---------------------------------------------------------------------
     productContainer.addEventListener('click', (e) => {
         const btn = e.target.closest('.quick-view-btn');
@@ -217,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showMoreBtn.addEventListener('click', showMoreItems);
 
     // ---------------------------------------------------------------------
-    // 11. Modal logic (NO per‑card price shown anywhere)
+    // 10. MODAL LOGIC (REWRITTEN – dropdown, transparent pricing)
     // ---------------------------------------------------------------------
     let currentUnitPrice = 0;
     let currentProductName = "";
@@ -232,16 +214,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modalTitle.textContent = product.name || product.id;
         modalCategoryLabel.textContent = `Allure ${product.category} Collection`;
-
-        // ❌ Hide any per‑card price
-        modalUnitPrice.style.display = 'none';   // completely remove from view
-        modalUnitPrice.textContent = '';          // safety
+        modalUnitPrice.textContent = `Rs. ${product.price} / card`;
 
         modalDescText.textContent = product.description || DEFAULT_DESCRIPTION;
 
+        // Main image
         modalImg.src = product.images[0];
         modalImg.alt = product.name || product.id;
 
+        // Thumbnails
         thumbnailContainer.innerHTML = '';
         if (product.images.length > 1) {
             product.images.forEach((imgSrc, index) => {
@@ -263,76 +244,104 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Set quantity input to minimum order
-        qtyInput.value = currentMinOrder;
-        qtyInput.min = currentMinOrder;
-        calculateTotal();           // update the modal total (no per‑card price)
+        // Populate dropdown from minOrder to 1500 in steps of 50
+        populateQtyDropdown(currentMinOrder);
+
+        // Bind change event and calculate
+        qtySelect.removeEventListener('change', calculateTotal);
+        qtySelect.addEventListener('change', calculateTotal);
+        calculateTotal();
 
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
 
-    // ---------------------------------------------------------------------
-    // 12. Calculator – only final total, no breakdown revealing unit price
-    // ---------------------------------------------------------------------
+    function populateQtyDropdown(minOrder) {
+        qtySelect.innerHTML = '';
+        for (let qty = minOrder; qty <= 1500; qty += 50) {
+            const option = document.createElement('option');
+            option.value = qty;
+            option.textContent = qty.toLocaleString() + ' cards';
+            if (qty === minOrder) option.selected = true;
+            qtySelect.appendChild(option);
+        }
+    }
+
     function calculateTotal() {
-        let qty = parseInt(qtyInput.value);
-        if (isNaN(qty) || qty < currentMinOrder) qty = currentMinOrder;
+        const qty = parseInt(qtySelect.value, 10);
 
-        // Compute final total using the tier rules (never reveals unit price)
-        const total = calculateTotalForQuantity(qty, currentUnitPrice);
+        // 1. Card cost (raw)
+        const cardCost = qty * currentUnitPrice;
 
-        // Hide the base‑amount and discount rows so nothing leaks the per‑card cost
-        document.querySelector('.calc-summary .summary-row:nth-child(1)').style.display = 'none'; // base amount row
-        document.getElementById('discount-row').style.display = 'none';
-        document.querySelector('.calc-summary .divider-sm').style.display = 'none';
+        // 2. Determine printing charge
+        const printingCharge = qty < 200 ? 600 : 0;
 
-        // Only show the final total
-        calcFinalTotal.textContent = `Rs. ${total.toLocaleString()}`;
+        // 3. Determine discount factor
+        let factor = 1.0;
+        let discountPercent = 0;
+        if (qty >= 1000) {
+            factor = 0.90;
+            discountPercent = 10;
+        } else if (qty >= 500) {
+            factor = 0.95;
+            discountPercent = 5;
+        }
+        // (200-499: no discount, no printing charge – factor stays 1.0)
 
-        // WhatsApp message – no unit price
+        // 4. Discount amount (savings)
+        const discountAmount = Math.round(cardCost * (1 - factor));
+
+        // 5. Final total
+        const finalTotal = Math.round(cardCost * factor) + printingCharge;
+
+        // Update DOM
+        calcCardCost.textContent = `Rs. ${cardCost.toLocaleString()}`;
+
+        // Printing row
+        if (printingCharge > 0) {
+            printingRow.style.display = 'flex';
+        } else {
+            printingRow.style.display = 'none';
+        }
+
+        // Discount row
+        if (discountPercent > 0) {
+            discountRow.style.display = 'flex';
+            calcDiscountPct.textContent = discountPercent;
+            calcDiscountAmt.textContent = discountAmount.toLocaleString();
+        } else {
+            discountRow.style.display = 'none';
+        }
+
+        calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
+
+        // WhatsApp message (no unit price)
         const message = `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
                         `*Design:* ${currentProductName} (${currentProductCategory} Collection)\n` +
                         `*Quantity:* ${qty}\n` +
-                        `*Estimated Total:* Rs. ${total.toLocaleString()}\n\n` +
+                        `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}\n\n` +
                         `Please let me know how to proceed.`;
         whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     }
 
-    qtyInput.addEventListener('input', calculateTotal);
-    qtyInput.addEventListener('change', () => {
-        if (parseInt(qtyInput.value) < currentMinOrder) {
-            qtyInput.value = currentMinOrder;
-            calculateTotal();
-        }
-    });
-
     // ---------------------------------------------------------------------
-    // 13. Close modal
+    // 11. Close modal
     // ---------------------------------------------------------------------
     closeModalBtn.addEventListener('click', () => {
         modal.classList.remove('active');
         document.body.style.overflow = 'auto';
-        // Restore the hidden rows so they appear normal next time modal opens
-        const summaryRows = document.querySelectorAll('.calc-summary .summary-row');
-        if (summaryRows.length > 0) summaryRows[0].style.display = '';
-        document.getElementById('discount-row').style.display = '';
-        document.querySelector('.calc-summary .divider-sm').style.display = '';
     });
 
     window.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
-            const summaryRows = document.querySelectorAll('.calc-summary .summary-row');
-            if (summaryRows.length > 0) summaryRows[0].style.display = '';
-            document.getElementById('discount-row').style.display = '';
-            document.querySelector('.calc-summary .divider-sm').style.display = '';
         }
     });
 
     // ---------------------------------------------------------------------
-    // 14. Footer year
+    // 12. Footer year
     // ---------------------------------------------------------------------
     document.getElementById('currentYear').textContent = new Date().getFullYear();
+
 });
