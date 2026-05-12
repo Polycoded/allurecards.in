@@ -30,13 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalCategoryLabel = document.getElementById('modal-category-label');
     const modalDescText = document.getElementById('modal-desc-text');
 
-    // NEW: select dropdown
+    // NEW calculator elements
     const qtySelect = document.getElementById('modal-qty-select');
     const calcCardCost = document.getElementById('calc-card-cost');
+    const calcPrintingVal = document.getElementById('calc-printing-val');
     const printingRow = document.getElementById('printing-row');
+    const calcDiscountVal = document.getElementById('calc-discount-val');
     const discountRow = document.getElementById('discount-row');
-    const calcDiscountPct = document.getElementById('calc-discount-pct');
-    const calcDiscountAmt = document.getElementById('calc-discount-amt');
+    const calcSavingsVal = document.getElementById('calc-savings-val');
     const calcFinalTotal = document.getElementById('calc-final-total');
     const whatsappBtn = document.getElementById('modal-whatsapp-btn');
 
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentFilter = 'All';
 
     // ---------------------------------------------------------------------
-    // 3. Fetch data and initialize
+    // 3. Fetch data and initialise
     // ---------------------------------------------------------------------
     fetch('./data/cards.json')
         .then(res => res.json())
@@ -56,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ...p,
                 images: (p.images && p.images.length > 0) ? p.images : ['assets/cards/placeholder.jpg'],
                 featured: p.featured || false,
-                minOrder: p.minOrder || 100,         // for dropdown start
+                minOrder: p.minOrder || 100,
                 description: p.description || DEFAULT_DESCRIPTION
             }));
 
@@ -148,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------------
-    // 7. Create card HTML (unchanged – will still show ID and per‑card price)
+    // 7. Create card HTML (unchanged)
     // ---------------------------------------------------------------------
     function createCardHTML(product) {
         const productJson = encodeURIComponent(JSON.stringify(product));
@@ -199,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showMoreBtn.addEventListener('click', showMoreItems);
 
     // ---------------------------------------------------------------------
-    // 10. MODAL LOGIC (REWRITTEN – dropdown, transparent pricing)
+    // 10. MODAL – DROPDOWN, TRANSPARENT PRICING WITH SAVINGS EMPHASIS
     // ---------------------------------------------------------------------
     let currentUnitPrice = 0;
     let currentProductName = "";
@@ -244,10 +245,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Populate dropdown from minOrder to 1500 in steps of 50
+        // Populate dropdown from minOrder to 1500, step 50
         populateQtyDropdown(currentMinOrder);
 
-        // Bind change event and calculate
+        // Bind change event
         qtySelect.removeEventListener('change', calculateTotal);
         qtySelect.addEventListener('change', calculateTotal);
         calculateTotal();
@@ -269,14 +270,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function calculateTotal() {
         const qty = parseInt(qtySelect.value, 10);
-
-        // 1. Card cost (raw)
         const cardCost = qty * currentUnitPrice;
 
-        // 2. Determine printing charge
+        // Printing charge
         const printingCharge = qty < 200 ? 600 : 0;
+        const printingWaived = printingCharge === 0 ? 600 : 0; // how much they saved on printing
 
-        // 3. Determine discount factor
+        // Volume discount
         let factor = 1.0;
         let discountPercent = 0;
         if (qty >= 1000) {
@@ -286,33 +286,51 @@ document.addEventListener("DOMContentLoaded", () => {
             factor = 0.95;
             discountPercent = 5;
         }
-        // (200-499: no discount, no printing charge – factor stays 1.0)
-
-        // 4. Discount amount (savings)
         const discountAmount = Math.round(cardCost * (1 - factor));
 
-        // 5. Final total
+        // Final total
         const finalTotal = Math.round(cardCost * factor) + printingCharge;
 
-        // Update DOM
+        // Total savings (printing waived + discount)
+        const totalSavings = printingWaived + discountAmount;
+
+        // ---- UI UPDATES ----
+
+        // Card cost
         calcCardCost.textContent = `Rs. ${cardCost.toLocaleString()}`;
 
         // Printing row
+        const printingSpan = calcPrintingVal;
         if (printingCharge > 0) {
-            printingRow.style.display = 'flex';
+            printingSpan.innerHTML = `Rs. 600`;
+            printingSpan.classList.remove('waived');
+            // remove any saved note
+            const savedNote = printingRow.querySelector('.saved-text');
+            if (savedNote) savedNote.remove();
         } else {
-            printingRow.style.display = 'none';
+            printingSpan.innerHTML = `<span class="waived">Rs. 600</span> <span class="saved-text">FREE</span>`;
         }
 
         // Discount row
+        discountRow.style.display = 'flex';
         if (discountPercent > 0) {
-            discountRow.style.display = 'flex';
-            calcDiscountPct.textContent = discountPercent;
-            calcDiscountAmt.textContent = discountAmount.toLocaleString();
+            calcDiscountVal.innerHTML = `− Rs. ${discountAmount.toLocaleString()} (${discountPercent}% off)`;
+            calcDiscountVal.style.color = '#2e7d32';
         } else {
-            discountRow.style.display = 'none';
+            // Show hint to encourage larger orders
+            calcDiscountVal.innerHTML = `<span style="color:var(--text-light); font-size:0.8rem;">5% off on 500+ &nbsp;·&nbsp; 10% off on 1000+</span>`;
         }
 
+        // Savings row
+        if (totalSavings > 0) {
+            calcSavingsVal.textContent = `Rs. ${totalSavings.toLocaleString()}`;
+            document.getElementById('savings-row').style.opacity = '1';
+        } else {
+            calcSavingsVal.textContent = '—';
+            document.getElementById('savings-row').style.opacity = '0.5';
+        }
+
+        // Final total
         calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
 
         // WhatsApp message (no unit price)
@@ -343,5 +361,4 @@ document.addEventListener("DOMContentLoaded", () => {
     // 12. Footer year
     // ---------------------------------------------------------------------
     document.getElementById('currentYear').textContent = new Date().getFullYear();
-
 });
