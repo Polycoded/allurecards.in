@@ -1,10 +1,8 @@
 /**
- * ALLURE — app.js
+ * ALLURE – app.js
  * Handles: preloader, products, filtering,
- *          quick-view modal, price calculator, lightbox
- * 
- * NOTE: cards.json is fetched from ./data/cards.json
- *       All backend (Apps Script / code.gs) logic is unchanged.
+ *          quick-view modal (incl. size, material, extra charges),
+ *          price calculator, lightbox, scroll animations
  */
 
 (function () {
@@ -71,14 +69,30 @@
     let currentProductCat   = '';
     let currentMinOrder     = 100;
 
+    // Extra charges storage for calculator
+    window.currentExtraCharges = [];
+
     /* ============================================================
-       1. PRELOADER – exactly 1.8 s after `load` event
+       1. PRELOADER – wait for hero background, then 2s timer
     ============================================================ */
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.body.classList.add('loaded');
-        }, 1800);
-    });
+    (function initPreloader() {
+        const heroImgSrc = 'assets/cards/final_background.jpg';
+        const img = new Image();
+
+        img.onload = function() {
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 2000);
+        };
+
+        img.onerror = function() {
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 3000);
+        };
+
+        img.src = heroImgSrc;
+    })();
 
     /* ============================================================
        2. FOOTER YEAR
@@ -100,7 +114,10 @@
                 images:      (p.images && p.images.length > 0) ? p.images : ['assets/cards/placeholder.jpg'],
                 featured:    p.featured  || false,
                 minOrder:    p.minOrder  || 100,
-                description: p.description || DEFAULT_DESC
+                description: p.description || DEFAULT_DESC,
+                size:        p.size      || '210×155 mm',
+                material:    p.material  || 'Pearl Shimmer Cardstock',
+                extraCharges: p.extraCharges || []
             }));
 
             buildCategoryMenu();
@@ -153,7 +170,6 @@
        5. FILTER BUTTONS
     ============================================================ */
     function buildFilterButtons() {
-        // Remove any previously built category buttons (keep "All")
         filterContainer.querySelectorAll('.filter-btn:not([data-filter="All"])').forEach(b => b.remove());
 
         getUniqueCategories().forEach(cat => {
@@ -176,7 +192,6 @@
         document.querySelectorAll('.filter-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.filter === filter);
         });
-        // Sync category cards highlight too
         document.querySelectorAll('.category-card').forEach(c => {
             c.classList.toggle('active', c.dataset.category === filter);
         });
@@ -191,7 +206,6 @@
             ? [...allProducts]
             : allProducts.filter(p => p.category === filter);
 
-        // Featured items first
         filteredProducts.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
         visibleCount = Math.min(ITEMS_PER_PAGE, filteredProducts.length);
@@ -206,6 +220,8 @@
                 .join('');
         }
         updateShowMoreBtn();
+        // Observe new fade-up elements
+        setTimeout(observeAnimatedElements, 50);
     }
 
     function createCardHTML(product) {
@@ -214,7 +230,7 @@
             ? '<span class="featured-badge">Featured</span>'
             : '';
         return `
-            <div class="product-card">
+            <div class="product-card fade-up">
                 <div class="product-img-wrapper">
                     ${featuredBadge}
                     <img src="${escapeHtml(product.images[0])}"
@@ -256,6 +272,7 @@
         productContainer.insertAdjacentHTML('beforeend', newHTML);
         visibleCount = nextCount;
         updateShowMoreBtn();
+        setTimeout(observeAnimatedElements, 50);
     });
 
     function updateShowMoreBtn() {
@@ -263,7 +280,33 @@
     }
 
     /* ============================================================
-       7. QUICK VIEW MODAL
+       7. SCROLL ANIMATIONS (Intersection Observer)
+    ============================================================ */
+    const animationObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('appear');
+                animationObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    function observeAnimatedElements() {
+        document.querySelectorAll('.fade-up:not(.appear)').forEach(el => {
+            animationObserver.observe(el);
+        });
+    }
+
+    // Observe initial elements when DOM is ready
+    window.addEventListener('load', () => {
+        setTimeout(observeAnimatedElements, 100);
+    });
+
+    /* ============================================================
+       8. QUICK VIEW MODAL
     ============================================================ */
     function openProductModal(product) {
         currentProductName  = product.id;
@@ -272,17 +315,24 @@
         currentMinOrder     = product.minOrder || 100;
         currentImages       = product.images || [];
 
-        // Populate header info
         modalTitle.textContent       = product.name || product.id;
         modalCategoryLbl.textContent = `Allure ${product.category} Collection`;
         modalUnitPrice.textContent   = `Rs. ${product.price} / card`;
-        modalDescText.textContent    = product.description || DEFAULT_DESC;
+
+        // Set product details (size, material, description)
+        document.getElementById('modal-size').textContent = product.size || '210×155 mm';
+        document.getElementById('modal-material').textContent = product.material || 'Pearl Shimmer Cardstock';
+        modalDescText.textContent = product.description || DEFAULT_DESC;
+
+        // Extra charges
+        window.currentExtraCharges = product.extraCharges || [];
+        displayExtraCharges(window.currentExtraCharges);
 
         // Main image
         modalImg.src = currentImages[0] || '';
         modalImg.alt = product.name || product.id;
 
-        // Thumbnails — only show if there are multiple images
+        // Thumbnails
         thumbnailRow.innerHTML = '';
         if (currentImages.length > 1) {
             currentImages.forEach((src, idx) => {
@@ -315,6 +365,21 @@
         closeModalBtn.focus();
     }
 
+    function displayExtraCharges(charges) {
+        const section = document.getElementById('modal-extra-charges');
+        const list = document.getElementById('modal-extra-charges-list');
+        if (!charges || charges.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+        section.style.display = 'block';
+        list.innerHTML = charges.map(charge => `
+            <div class="extra-charge-row">
+                <span class="extra-charge-name">${escapeHtml(charge.name)}</span>
+            </div>
+        `).join('');
+    }
+
     /* ---- Close modal ---- */
     function closeModal() {
         closeGallery(/* fromModal= */ true);
@@ -330,7 +395,7 @@
     });
 
     /* ============================================================
-       8. PRICE CALCULATOR
+       9. PRICE CALCULATOR
     ============================================================ */
     function populateQtyDropdown(minOrder) {
         qtySelect.innerHTML = '';
@@ -349,13 +414,16 @@
         const printingFee   = qty < 200 ? 600 : 0;
         const printingWaived = printingFee === 0 ? 600 : 0;
 
+        // Extra charges (fixed)
+        const extraTotal = (window.currentExtraCharges || []).reduce((sum, ch) => sum + ch.price, 0);
+
         let factor = 1.0;
         let discountPct = 0;
         if      (qty >= 1000) { factor = 0.90; discountPct = 10; }
         else if (qty >= 500)  { factor = 0.95; discountPct = 5;  }
 
         const discountAmt = Math.round(cardCost * (1 - factor));
-        const finalTotal  = Math.round(cardCost * factor) + printingFee;
+        const finalTotal  = Math.round(cardCost * factor) + printingFee + extraTotal;
         const totalSavings = printingWaived + discountAmt;
 
         // Card cost
@@ -381,24 +449,43 @@
             calcSavingsVal.textContent = `Rs. ${totalSavings.toLocaleString()}`;
         }
 
+        // Extra charges row in calculator
+        const extraRow = document.getElementById('extra-charges-row');
+        if (extraTotal > 0) {
+            if (!extraRow) {
+                const divider = document.querySelector('.calc-summary .divider-sm');
+                const newRow = document.createElement('div');
+                newRow.id = 'extra-charges-row';
+                newRow.className = 'summary-row extra-charges-summary';
+                newRow.innerHTML = '<span>Additional Charges</span><span id="calc-extra-total">Rs. 0</span>';
+                divider.parentNode.insertBefore(newRow, divider);
+            }
+            document.getElementById('calc-extra-total').textContent = `Rs. ${extraTotal.toLocaleString()}`;
+        } else {
+            if (extraRow) extraRow.remove();
+        }
+
         // Final total
         calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
 
         // WhatsApp message
-        const message =
-            `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
-            `*Design:* ${currentProductName} (${currentProductCat} Collection)\n` +
-            `*Quantity:* ${qty}\n` +
-            `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}\n\n` +
-            `Please let me know how to proceed.`;
-
+        let extraMsg = '';
+        if (extraTotal > 0 && window.currentExtraCharges.length > 0) {
+            extraMsg = '\n*Additional Services:* ' +
+                window.currentExtraCharges.map(c => c.name).join(', ') +
+                ' (Rs. ' + extraTotal.toLocaleString() + ')';
+        }
+        const message = `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
+                        `*Design:* ${currentProductName} (${currentProductCat} Collection)\n` +
+                        `*Quantity:* ${qty}\n` +
+                        `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}${extraMsg}\n\n` +
+                        `Please let me know how to proceed.`;
         whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     }
 
     /* ============================================================
-       9. LIGHTBOX
+       10. LIGHTBOX
     ============================================================ */
-    // Click main modal image → open lightbox
     modalImg.addEventListener('click', () => {
         if (!currentImages.length) return;
         const activeSrc = modalImg.getAttribute('src');
@@ -425,10 +512,6 @@
         galleryNext.style.display = multiple ? 'block' : 'none';
     }
 
-    /**
-     * Close the lightbox.
-     * @param {boolean} fromModal - if true, modal is still open, don't restore body scroll
-     */
     function closeGallery(fromModal = false) {
         galleryOverlay.classList.remove('active');
         if (!fromModal && !modal.classList.contains('active')) {
@@ -455,7 +538,6 @@
         updateGalleryImage();
     });
 
-    // Keyboard navigation for lightbox
     document.addEventListener('keydown', e => {
         if (!galleryOverlay.classList.contains('active')) return;
         switch (e.key) {
@@ -484,7 +566,6 @@
         return [...new Set(allProducts.map(p => p.category).filter(Boolean))];
     }
 
-    /** Basic HTML escape to prevent XSS when inserting untrusted strings into innerHTML */
     function escapeHtml(str) {
         if (str == null) return '';
         return String(str)
