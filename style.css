@@ -106,7 +106,7 @@ ul {
    Fixed top, transparent → frosted glass on scroll
    ============================================================ */
 .site-header {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -134,7 +134,7 @@ ul {
 
 /* Logo: 64px default, shrinks to 48px on scroll */
 .brand-logo {
-    height: 64px; 
+    height: 100px; 
     width: auto;
     transition: height 0.4s var(--ease-out);
 }
@@ -153,20 +153,20 @@ nav ul {
 /* Nav buttons: uppercase, subtle hover background */
 nav a {
     font-family: var(--font-ui);
-    font-size: 0.75rem; 
+    font-size: 0.85rem;              /* increased from 0.8rem */
     font-weight: 500;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;          /* slightly tighter spacing */
     text-transform: uppercase;
     color: var(--ink);
-    padding: 8px 16px;
-    border-radius: 8px; 
+    padding: 3px 12px;               /* decreased from 8px 16px */
+    border-radius: 8px;
     position: relative;
     transition: all 0.3s;
 }
 
 nav a:hover {
-    color: var(--gold-dark);
-    background: rgba(182, 141, 83, 0.08);
+    color: #ffffff;                  /* white text on hover */
+    background: var(--gold);         /* solid gold background */
 }
 
 
@@ -201,8 +201,8 @@ nav a:hover {
     z-index: 5;
     flex: 1;
     display: flex;
-    align-items: center;
-    padding: 0px 10% 60px;
+    align-items: flex-start;
+    padding: 65px 10% 0px 5%; 
 }
 
 .hero-content {
@@ -243,7 +243,7 @@ nav a:hover {
 /* Eyebrow: italic serif, gold */
 .hero-eyebrow {
     font-family: var(--font-display);
-    font-size: 0.9rem;
+    font-size: 1.1rem;              /* was 0.9rem */
     font-style: italic;
     font-weight: 400;
     letter-spacing: 0.15em;
@@ -267,6 +267,7 @@ nav a:hover {
     font-style: italic;
     font-weight: 300;
     color: var(--gold-dark);
+    font-size: 1.1em; 
 }
 
 /* Decorative rule: line + stars + line */
@@ -341,14 +342,14 @@ nav a:hover {
 
 /* Gold primary button */
 .btn-gold {
-    background: var(--gold);
-    color: var(--white);
-    border: 1px solid var(--gold);
+    background: #b68d53;
+    color: #ffffff;
+    border: 1px solid #b68d53;
 }
 
 .btn-gold:hover {
-    background: var(--gold-dark);
-    border-color: var(--gold-dark);
+    background: #8c6835;
+    border-color: #8c6835;
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(182, 141, 83, 0.3);
 }
@@ -372,12 +373,14 @@ nav a:hover {
    Centered bottom tagline
    ============================================================ */
 .hero-footer {
-    position: relative;
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
     z-index: 5;
     text-align: center;
-    padding-bottom: 35px;
     font-family: var(--font-ui);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 400;
     letter-spacing: 0.25em;
     text-transform: uppercase;
