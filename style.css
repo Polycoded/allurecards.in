@@ -1,6 +1,6 @@
 /* ============================================================
    ALLURE – styles.css
-   Luxury left‑aligned hero · transparent navbar · blue‑gold CTA
+   Luxury left‑aligned hero · semi‑transparent navbar · blue‑gold CTA
    ============================================================ */
 
 /* ---- CSS Variables ---- */
@@ -109,7 +109,7 @@ body.loaded #preloader {
 }
 
 /* ============================================================
-   SITE HEADER — absolute, transparent, overlays hero
+   SITE HEADER — absolute, transparent, semi‑transparent hover
    ============================================================ */
 .site-header {
     position: absolute;
@@ -123,15 +123,15 @@ body.loaded #preloader {
     align-items: center;
     background: transparent;
     border-bottom: none;
-    transition: background-color 0.4s ease, backdrop-filter 0.4s ease;
-}
-.site-header.scrolled {
-    background: transparent;
-    box-shadow: none;
+    transition: background-color 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.3s;
 }
 .site-header:hover {
     background-color: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(4px);
+}
+.site-header.scrolled {
+    background: transparent;
+    box-shadow: none;
 }
 .header-inner {
     display: flex;
@@ -148,7 +148,7 @@ body.loaded #preloader {
     align-items: flex-start;
 }
 .brand-logo {
-    height: 80px;   /* increased from 65px */
+    height: 80px;
     width: auto;
     display: block;
 }
@@ -163,7 +163,7 @@ nav a {
     text-decoration: none;
     color: var(--text-dark);
     font-family: var(--font-sans);
-    font-size: 0.82rem;   /* increased from 0.72rem */
+    font-size: 0.82rem;
     font-weight: 500;
     letter-spacing: 2.5px;
     text-transform: uppercase;
@@ -185,13 +185,13 @@ nav a:hover { color: var(--gold); }
 nav a:hover::after { width: 100%; }
 
 /* ============================================================
-   HERO SECTION
+   HERO SECTION (background corrected to PNG)
    ============================================================ */
 .hero {
     position: relative;
     height: 100vh;
     min-height: 620px;
-    background: url("assets/cards/final_background.jpg") no-repeat center right / cover;
+    background: url("assets/cards/final_background.png") no-repeat center right / cover;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -209,7 +209,7 @@ nav a:hover::after { width: 100%; }
     z-index: 0;
 }
 
-/* Hero body – left aligned, centred vertically */
+/* Hero body – content shifted up (padding-top reduced) */
 .hero-body {
     position: relative;
     z-index: 1;
@@ -217,7 +217,7 @@ nav a:hover::after { width: 100%; }
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 30px;
+    padding-top: 30px;   /* shifted up from 60px */
     padding-left: clamp(2rem, 8vw, 7rem);
     padding-right: 2rem;
 }
@@ -281,12 +281,14 @@ nav a:hover::after { width: 100%; }
     font-weight: 400;
 }
 
-/* 5. Buttons */
+/* 5. Buttons – stacked vertically, full width, centered */
 .cta-group {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+    width: 100%;
+    max-width: 360px;
 }
 
 .btn {
@@ -301,8 +303,8 @@ nav a:hover::after { width: 100%; }
     transition: all 0.3s ease;
     cursor: pointer;
     white-space: nowrap;
-    display: inline-block;
     text-align: center;
+    width: 100%;
 }
 .btn-primary {
     background-color: var(--gold);
@@ -1133,13 +1135,14 @@ section { padding: 100px 5%; }
     .site-header { padding: 0 1.5rem; }
     .header-inner { flex-direction: column; gap: 0.5rem; justify-content: center; }
     .site-header { height: auto; padding: 0.8rem 1.5rem; }
+    .brand-logo { height: 60px; }  /* slightly smaller on mobile */
 
     nav ul { flex-wrap: wrap; justify-content: center; gap: 1rem; }
 
-    .hero-body { padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 60px; }
-    .hero-content { max-width: 100%; }
-    .cta-group { flex-direction: column; align-items: stretch; }
-    .btn { width: 100%; }
+    .hero-body { padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 20px; }
+    .hero-content { max-width: 100%; align-items: center; text-align: center; }
+    .cta-group { max-width: 100%; align-items: center; }
+    .btn { width: 90%; }
 
     .hook-container { flex-direction: column; text-align: center; gap: 2.5rem; }
     .hook-text h2 { font-size: 2.2rem; }
