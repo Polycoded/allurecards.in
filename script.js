@@ -75,10 +75,10 @@
        1. PRELOADER
     ============================================================ */
     window.addEventListener('load', () => {
-        // 4.3s lets the SVG draw + text fade finish gracefully
+        // Short delay for the scale‑in animation to finish before page appears
         setTimeout(() => {
             document.body.classList.add('loaded');
-        }, 4300);
+        }, 1800);
     });
 
     /* ============================================================
@@ -154,7 +154,6 @@
        5. FILTER BUTTONS
     ============================================================ */
     function buildFilterButtons() {
-        // Remove any previously built category buttons (keep "All")
         filterContainer.querySelectorAll('.filter-btn:not([data-filter="All"])').forEach(b => b.remove());
 
         getUniqueCategories().forEach(cat => {
@@ -177,7 +176,6 @@
         document.querySelectorAll('.filter-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.filter === filter);
         });
-        // Sync category cards highlight too
         document.querySelectorAll('.category-card').forEach(c => {
             c.classList.toggle('active', c.dataset.category === filter);
         });
@@ -192,7 +190,6 @@
             ? [...allProducts]
             : allProducts.filter(p => p.category === filter);
 
-        // Featured items first
         filteredProducts.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
         visibleCount = Math.min(ITEMS_PER_PAGE, filteredProducts.length);
@@ -235,7 +232,6 @@
         `;
     }
 
-    // Event delegation for quick-view buttons
     productContainer.addEventListener('click', e => {
         const btn = e.target.closest('.quick-view-btn');
         if (!btn) return;
@@ -247,7 +243,6 @@
         }
     });
 
-    // Show more
     showMoreBtn.addEventListener('click', () => {
         const nextCount = Math.min(visibleCount + ITEMS_PER_PAGE, filteredProducts.length);
         const newHTML = filteredProducts
@@ -273,17 +268,14 @@
         currentMinOrder     = product.minOrder || 100;
         currentImages       = product.images || [];
 
-        // Populate header info
         modalTitle.textContent       = product.name || product.id;
         modalCategoryLbl.textContent = `Allure ${product.category} Collection`;
         modalUnitPrice.textContent   = `Rs. ${product.price} / card`;
         modalDescText.textContent    = product.description || DEFAULT_DESC;
 
-        // Main image
         modalImg.src = currentImages[0] || '';
         modalImg.alt = product.name || product.id;
 
-        // Thumbnails — only show if there are multiple images
         thumbnailRow.innerHTML = '';
         if (currentImages.length > 1) {
             currentImages.forEach((src, idx) => {
@@ -303,22 +295,19 @@
             });
         }
 
-        // Calculator
         populateQtyDropdown(currentMinOrder);
         qtySelect.removeEventListener('change', calculateTotal);
         qtySelect.addEventListener('change', calculateTotal);
         calculateTotal();
 
-        // Open
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
         closeModalBtn.focus();
     }
 
-    /* ---- Close modal ---- */
     function closeModal() {
-        closeGallery(/* fromModal= */ true);
+        closeGallery(true);
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = 'auto';
@@ -359,33 +348,27 @@
         const finalTotal  = Math.round(cardCost * factor) + printingFee;
         const totalSavings = printingWaived + discountAmt;
 
-        // Card cost
         calcCardCost.textContent = `Rs. ${cardCost.toLocaleString()}`;
 
-        // Printing
         if (printingFee > 0) {
             calcPrintingVal.innerHTML = 'Rs. 600';
         } else {
             calcPrintingVal.innerHTML = '<span class="waived">Rs. 600</span> <span class="saved-text">FREE</span>';
         }
 
-        // Discount row
         discountRow.style.display = discountPct > 0 ? 'flex' : 'none';
         if (discountPct > 0) {
             calcDiscountVal.innerHTML = `− Rs. ${discountAmt.toLocaleString()} (${discountPct}% off)`;
             calcDiscountVal.style.color = '#2e7d32';
         }
 
-        // Savings row
         savingsRow.style.display = totalSavings > 0 ? 'flex' : 'none';
         if (totalSavings > 0) {
             calcSavingsVal.textContent = `Rs. ${totalSavings.toLocaleString()}`;
         }
 
-        // Final total
         calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
 
-        // WhatsApp message
         const message =
             `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
             `*Design:* ${currentProductName} (${currentProductCat} Collection)\n` +
@@ -399,7 +382,6 @@
     /* ============================================================
        9. LIGHTBOX
     ============================================================ */
-    // Click main modal image → open lightbox
     modalImg.addEventListener('click', () => {
         if (!currentImages.length) return;
         const activeSrc = modalImg.getAttribute('src');
@@ -426,10 +408,6 @@
         galleryNext.style.display = multiple ? 'block' : 'none';
     }
 
-    /**
-     * Close the lightbox.
-     * @param {boolean} fromModal - if true, modal is still open, don't restore body scroll
-     */
     function closeGallery(fromModal = false) {
         galleryOverlay.classList.remove('active');
         if (!fromModal && !modal.classList.contains('active')) {
@@ -456,7 +434,6 @@
         updateGalleryImage();
     });
 
-    // Keyboard navigation for lightbox
     document.addEventListener('keydown', e => {
         if (!galleryOverlay.classList.contains('active')) return;
         switch (e.key) {
@@ -485,7 +462,6 @@
         return [...new Set(allProducts.map(p => p.category).filter(Boolean))];
     }
 
-    /** Basic HTML escape to prevent XSS when inserting untrusted strings into innerHTML */
     function escapeHtml(str) {
         if (str == null) return '';
         return String(str)
