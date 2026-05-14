@@ -73,10 +73,10 @@
     window.currentExtraCharges = [];
 
     /* ============================================================
-       1. PRELOADER – wait for hero background, then 2s timer
+       1. PRELOADER – wait for hero background (PNG), then 2s timer
     ============================================================ */
     (function initPreloader() {
-        const heroImgSrc = 'assets/cards/final_background.jpg';
+        const heroImgSrc = 'assets/cards/final_background.png';  // corrected to PNG
         const img = new Image();
 
         img.onload = function() {
