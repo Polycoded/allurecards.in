@@ -206,37 +206,31 @@
         updateShowMoreBtn();
     }
 
-    function createCardHTML(product) {
-        const productJson  = encodeURIComponent(JSON.stringify(product));
-        // After inserting the image, set the wrapper's aspect ratio to the image's natural ratio
-        const img = cardElement.querySelector('.product-img-wrapper img');
-            img.onload = function() {
-            const wrapper = img.parentElement;
-            wrapper.style.aspectRatio = (img.naturalWidth / img.naturalHeight).toFixed(4);
-        };
-        const featuredBadge = product.featured
-            ? '<span class="featured-badge">Featured</span>'
-            : '';
-        return `
-            <div class="product-card">
-                <div class="product-img-wrapper">
-                    ${featuredBadge}
-                    <img src="${escapeHtml(product.images[0])}"
-                         alt="${escapeHtml(product.id)} card design"
-                         loading="lazy">
-                    <div class="quick-view-overlay">
-                        <button class="quick-view-btn"
-                                data-product="${productJson}"
-                                aria-label="Quick view ${escapeHtml(product.id)}">
-                            Quick View
-                        </button>
-                    </div>
+function createCardHTML(product) {
+    const productJson  = encodeURIComponent(JSON.stringify(product));
+    const featuredBadge = product.featured
+        ? '<span class="featured-badge">Featured</span>'
+        : '';
+    return `
+        <div class="product-card">
+            <div class="product-img-wrapper">
+                ${featuredBadge}
+                <img src="${escapeHtml(product.images[0])}"
+                     alt="${escapeHtml(product.id)} card design"
+                     loading="lazy">
+                <div class="quick-view-overlay">
+                    <button class="quick-view-btn"
+                            data-product="${productJson}"
+                            aria-label="Quick view ${escapeHtml(product.id)}">
+                        Quick View
+                    </button>
                 </div>
-                <h4 class="product-id">${escapeHtml(product.id)}</h4>
-                <p class="product-price">Rs. ${product.price} / card</p>
             </div>
-        `;
-    }
+            <h4 class="product-id">${escapeHtml(product.id)}</h4>
+            <p class="product-price">Rs. ${product.price} / card</p>
+        </div>
+    `;
+}
 
     productContainer.addEventListener('click', e => {
         const btn = e.target.closest('.quick-view-btn');
