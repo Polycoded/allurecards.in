@@ -178,7 +178,7 @@ nav a:hover {
     position: relative;
     height: 100vh;
     min-height: 640px;
-    background: url("C:/Users/johnp/Downloads/gold_16_19.png") no-repeat center center / cover;
+    background: url("assets/cards/final_background.png") no-repeat center center / cover;
     display: flex;
     flex-direction: column;
 }
@@ -202,7 +202,7 @@ nav a:hover {
     flex: 1;
     display: flex;
     align-items: flex-start;
-    padding: 65px 10% 0px 5%; 
+    padding: 30px 10% 0px 5%; 
 }
 
 .hero-content {
