@@ -21,7 +21,7 @@
     --radius-pill:   30px;
     --font-heading:  'Cinzel', serif;
     --font-sans:     'Montserrat', sans-serif;
-    --header-h:      88px;   /* reserved for absolute header */
+    --header-h:      88px;
 }
 
 /* ---- Reset ---- */
@@ -112,7 +112,7 @@ body.loaded #preloader {
    SITE HEADER — absolute, transparent, overlays hero
    ============================================================ */
 .site-header {
-    position: absolute;   /* NOT sticky or fixed */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -121,7 +121,7 @@ body.loaded #preloader {
     height: var(--header-h);
     display: flex;
     align-items: center;
-    background: transparent;   /* completely transparent */
+    background: transparent;
     border-bottom: none;
     transition: background 0.3s, box-shadow 0.3s;
 }
@@ -138,18 +138,18 @@ body.loaded #preloader {
     margin: 0 auto;
 }
 
-/* Brand — image logo, left‑aligned */
+/* Brand – image logo, left‑aligned, increased height */
 .brand {
     display: flex;
     align-items: flex-start;
 }
 .brand-logo {
-    height: 65px;
+    height: 80px;   /* increased from 65px */
     width: auto;
     display: block;
 }
 
-/* Nav */
+/* Nav – increased font size */
 nav ul {
     display: flex;
     gap: 2.5rem;
@@ -159,7 +159,7 @@ nav a {
     text-decoration: none;
     color: var(--text-dark);
     font-family: var(--font-sans);
-    font-size: 0.72rem;
+    font-size: 0.82rem;   /* increased from 0.72rem */
     font-weight: 500;
     letter-spacing: 2.5px;
     text-transform: uppercase;
@@ -181,7 +181,7 @@ nav a:hover { color: var(--gold); }
 nav a:hover::after { width: 100%; }
 
 /* ============================================================
-   HERO SECTION (luxury left‑aligned layout)
+   HERO SECTION
    ============================================================ */
 .hero {
     position: relative;
@@ -198,8 +198,8 @@ nav a:hover::after { width: 100%; }
     inset: 0;
     background: linear-gradient(
         to right,
-        rgba(255, 255, 255, 0.60) 0%,   /* was 0.25 – much stronger white on the left */
-        rgba(255, 255, 255, 0.12) 50%,   /* was 0.05 – keeps some softness in the middle */
+        rgba(255, 255, 255, 0.60) 0%,
+        rgba(255, 255, 255, 0.12) 50%,
         transparent 100%
     );
     z-index: 0;
@@ -211,9 +211,9 @@ nav a:hover::after { width: 100%; }
     z-index: 1;
     flex: 1;
     display: flex;
-    align-items: center;            /* vertical centering */
-    justify-content: flex-start;   /* push content to the left */
-    padding-top: 60px;             /* lift block slightly upward */
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 60px;
     padding-left: clamp(2rem, 8vw, 7rem);
     padding-right: 2rem;
 }
@@ -221,7 +221,7 @@ nav a:hover::after { width: 100%; }
     max-width: 560px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;       /* left‑align children */
+    align-items: flex-start;
     text-align: left;
 }
 
@@ -229,13 +229,13 @@ nav a:hover::after { width: 100%; }
 .subheading {
     font-family: var(--font-sans);
     font-size: 0.72rem;
-    letter-spacing: 4px;          /* airy spacing */
+    letter-spacing: 4px;
     text-transform: uppercase;
     color: var(--text-dark);
     margin-bottom: 1.2rem;
 }
 
-/* 2. Main title – two lines via <br>, prominent */
+/* 2. Main title */
 .main-heading {
     font-size: clamp(2.4rem, 5vw, 3.8rem);
     font-weight: 400;
@@ -245,7 +245,7 @@ nav a:hover::after { width: 100%; }
     margin: 0 0 1.6rem 0;
 }
 
-/* 3. Gold star divider – centred within the left column */
+/* 3. Gold star divider */
 .hero-ornament {
     display: flex;
     align-items: center;
@@ -267,7 +267,7 @@ nav a:hover::after { width: 100%; }
     font-style: normal;
 }
 
-/* 4. Description – three lines, clean modern font */
+/* 4. Description */
 .description {
     font-family: var(--font-sans);
     font-size: 1rem;
@@ -277,7 +277,7 @@ nav a:hover::after { width: 100%; }
     font-weight: 400;
 }
 
-/* 5. Buttons – side‑by‑side, left‑aligned */
+/* 5. Buttons */
 .cta-group {
     display: flex;
     flex-wrap: wrap;
@@ -285,7 +285,6 @@ nav a:hover::after { width: 100%; }
     justify-content: flex-start;
 }
 
-/* Buttons */
 .btn {
     font-family: var(--font-sans);
     font-size: 0.72rem;
@@ -323,7 +322,7 @@ nav a:hover::after { width: 100%; }
     transform: translateY(-1px);
 }
 
-/* 6. Bottom signature – perfectly centred */
+/* 6. Bottom signature */
 .bottom-tag {
     position: relative;
     z-index: 1;
@@ -341,6 +340,19 @@ nav a:hover::after { width: 100%; }
     color: var(--text-dark);
     text-transform: uppercase;
     opacity: 0.65;
+}
+
+/* ============================================================
+   SCROLL ANIMATIONS (fade-up)
+   ============================================================ */
+.fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.fade-up.appear {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* ============================================================
@@ -655,7 +667,7 @@ section { padding: 100px 5%; }
     display: flex;
     overflow: hidden;
     flex: 1;
-    min-height: 0; /* important for overflow to work in flex child */
+    min-height: 0;
 }
 
 /* Gallery panel */
@@ -707,7 +719,7 @@ section { padding: 100px 5%; }
 .thumb:hover { border-color: var(--gold); }
 .thumb img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Info panel — SCROLLABLE so button is always reachable */
+/* Info panel */
 .modal-info {
     flex: 1;
     padding: 40px 36px;
@@ -739,6 +751,60 @@ section { padding: 100px 5%; }
     margin-bottom: 16px;
     font-weight: 500;
 }
+
+/* ---------- Modal Specs ---------- */
+.modal-specs {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.spec-divider {
+    color: var(--gold);
+    opacity: 0.4;
+}
+
+/* ---------- Extra Charges Section ---------- */
+.extra-charges-section {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #eee;
+    margin-bottom: 8px;
+}
+.extra-charges-title {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+.extra-charge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 6px;
+}
+.extra-charge-name {
+    flex-shrink: 0;
+}
+
+/* Calculator extra‑charges row */
+.extra-charges-summary {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 6px;
+}
+
 .modal-description {
     font-family: var(--font-sans);
     font-size: 0.88rem;
@@ -830,7 +896,7 @@ section { padding: 100px 5%; }
     gap: 10px;
     width: 100%;
     padding: 15px 24px;
-    background-color: var(--gold);                /* changed to gold */
+    background-color: var(--gold);
     color: #ffffff;
     font-family: var(--font-sans);
     font-size: 0.82rem;
@@ -839,27 +905,25 @@ section { padding: 100px 5%; }
     text-transform: uppercase;
     text-decoration: none;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--gold-hover);          /* thin gold border */
+    border: 1px solid var(--gold-hover);
     cursor: pointer;
     transition: background-color 0.35s ease, transform 0.25s ease, box-shadow 0.35s ease;
     margin-top: auto;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     flex-shrink: 0;
 }
-
 .whatsapp-cta-btn svg {
     width: 20px;
     height: 20px;
-    fill: currentColor;                            /* white */
+    fill: currentColor;
     flex-shrink: 0;
 }
-
 .whatsapp-cta-btn:hover {
-    background-color: var(--gold-hover);           /* darker gold on hover */
+    background-color: var(--gold-hover);
     color: #ffffff;
     border-color: var(--gold);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(179, 139, 77, 0.5); /* golden glow */
+    box-shadow: 0 8px 24px rgba(179, 139, 77, 0.5);
 }
 
 /* ============================================================
@@ -1017,7 +1081,7 @@ section { padding: 100px 5%; }
 .footer-copy { font-family: var(--font-sans); font-size: 0.78rem; color: #666; }
 
 /* ============================================================
-   STICKY WHATSAPP BUTTON (global, untouched)
+   STICKY WHATSAPP BUTTON
    ============================================================ */
 .sticky-whatsapp {
     position: fixed;
