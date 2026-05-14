@@ -1,16 +1,16 @@
 /* ============================================================
-   ALLURE – styles.css
-   Luxury left‑aligned hero · semi‑transparent navbar · blue‑gold CTA
+   ALLURE – style.css
+   Refactored Hero · Black & Champagne Gold · Premium Minimal
    ============================================================ */
 
 /* ---- CSS Variables ---- */
 :root {
-    --gold:          #b38b4d;
-    --gold-hover:    #9c7841;
-    --gold-light:    rgba(179, 139, 77, 0.15);
-    --text-dark:     #3a332a;
-    --text-muted:    #6b6b6b;
-    --text-light:    #7a7a7a;
+    --gold:          #D4AF37;        /* Champagne Gold */
+    --gold-hover:    #B8962E;        /* Deeper champagne for hover states */
+    --gold-light:    rgba(212, 175, 55, 0.12);
+    --text-dark:     #1A1A1A;        /* Rich Black */
+    --text-muted:    #555555;
+    --text-light:    #666666;
     --bg-page:       #f8f4ee;
     --bg-white:      #fff;
     --bg-cream:      #fdfcf9;
@@ -19,7 +19,7 @@
     --radius-sm:     4px;
     --radius-md:     8px;
     --radius-pill:   30px;
-    --font-heading:  'Cinzel', serif;
+    --font-heading:  'Cormorant Garamond', serif;
     --font-sans:     'Montserrat', sans-serif;
     --header-h:      88px;
 }
@@ -48,12 +48,13 @@ img { display: block; max-width: 100%; }
     top: -100px;
     left: 10px;
     background: var(--gold);
-    color: #fff;
+    color: var(--text-dark);
     padding: 0.5rem 1rem;
     z-index: 10000;
     transition: top 0.3s;
     font-family: var(--font-sans);
     font-size: 0.85rem;
+    font-weight: 500;
 }
 .skip-link:focus { top: 10px; }
 
@@ -126,8 +127,8 @@ body.loaded #preloader {
     transition: background-color 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.3s;
 }
 .site-header:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(6px);
 }
 .site-header.scrolled {
     background: transparent;
@@ -142,7 +143,7 @@ body.loaded #preloader {
     margin: 0 auto;
 }
 
-/* Brand – image logo, left‑aligned, increased height */
+/* Brand – image logo */
 .brand {
     display: flex;
     align-items: flex-start;
@@ -153,7 +154,7 @@ body.loaded #preloader {
     display: block;
 }
 
-/* Nav – increased font size */
+/* Nav – uppercase, heavy letter-spacing for luxury feel */
 nav ul {
     display: flex;
     gap: 2.5rem;
@@ -163,13 +164,13 @@ nav a {
     text-decoration: none;
     color: var(--text-dark);
     font-family: var(--font-sans);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 500;
-    letter-spacing: 2.5px;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    transition: color 0.25s;
+    transition: color 0.3s ease;
     position: relative;
-    padding-bottom: 3px;
+    padding-bottom: 4px;
 }
 nav a::after {
     content: '';
@@ -179,13 +180,13 @@ nav a::after {
     width: 0;
     height: 1px;
     background: var(--gold);
-    transition: width 0.3s ease;
+    transition: width 0.35s ease;
 }
 nav a:hover { color: var(--gold); }
 nav a:hover::after { width: 100%; }
 
 /* ============================================================
-   HERO SECTION (background corrected to PNG)
+   HERO SECTION
    ============================================================ */
 .hero {
     position: relative;
@@ -197,126 +198,133 @@ nav a:hover::after { width: 100%; }
     overflow: hidden;
 }
 
+/* Subtle left-to-right gradient to ensure text legibility over the image */
 .overlay-gradient {
     position: absolute;
     inset: 0;
     background: linear-gradient(
         to right,
-        rgba(255, 255, 255, 0.60) 0%,
-        rgba(255, 255, 255, 0.12) 50%,
+        rgba(255, 255, 255, 0.55) 0%,
+        rgba(255, 255, 255, 0.10) 50%,
         transparent 100%
     );
     z-index: 0;
 }
 
-/* Hero body – content shifted up (padding-top reduced) */
+/* Hero body – vertically centered with generous left padding */
 .hero-body {
     position: relative;
     z-index: 1;
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: center;                    /* vertical centering */
     justify-content: flex-start;
-    padding-top: 30px;   /* shifted up from 60px */
-    padding-left: clamp(2rem, 8vw, 7rem);
+    padding-left: clamp(2.5rem, 12vw, 9rem);  /* 10–12vw breathing room */
     padding-right: 2rem;
 }
 .hero-content {
-    max-width: 560px;
+    max-width: 580px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
 }
 
-/* 1. Hook line */
+/* 1. Eyebrow / subheading */
 .subheading {
     font-family: var(--font-sans);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: var(--text-dark);
-    margin-bottom: 1.2rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    font-weight: 500;
 }
 
-/* 2. Main title */
+/* 2. Main headline – Cormorant Garamond, light weight, airy */
 .main-heading {
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-    font-weight: 400;
-    line-height: 1.2;
+    font-family: var(--font-heading);
+    font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+    font-weight: 300;
+    line-height: 1.15;
     color: var(--text-dark);
-    letter-spacing: 2px;
-    margin: 0 0 1.6rem 0;
+    letter-spacing: 1.5px;
+    margin: 0 0 1.4rem 0;
 }
 
-/* 3. Gold star divider */
+/* 3. Champagne gold star divider */
 .hero-ornament {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 1.6rem 0;
-    justify-content: center;
+    gap: 12px;
+    margin: 1.4rem 0;
 }
 .hero-ornament::before,
 .hero-ornament::after {
     content: '';
     display: block;
-    width: 40px;
+    width: 45px;
     height: 1px;
     background-color: var(--gold);
 }
 .hero-ornament i {
     color: var(--gold);
-    font-size: 12px;
+    font-size: 13px;
     font-style: normal;
 }
 
-/* 4. Description */
+/* 4. Description – increased line-height for readability */
 .description {
     font-family: var(--font-sans);
     font-size: 1rem;
-    line-height: 1.85;
+    line-height: 1.75;
     color: var(--text-dark);
     margin-bottom: 2.5rem;
     font-weight: 400;
 }
 
-/* 5. Buttons – stacked vertically, full width, centered */
+/* 5. CTA Buttons – side-by-side, premium black & gold */
 .cta-group {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.8rem;
-    width: 100%;
-    max-width: 360px;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .btn {
     font-family: var(--font-sans);
     font-size: 0.72rem;
     font-weight: 500;
-    letter-spacing: 2px;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
     text-decoration: none;
-    padding: 14px 30px;
+    padding: 15px 34px;
     border-radius: var(--radius-sm);
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     cursor: pointer;
     white-space: nowrap;
     text-align: center;
-    width: 100%;
+    display: inline-block;
+    position: relative;
 }
+
+/* Primary – solid rich black, gold text, thin gold border */
 .btn-primary {
-    background-color: var(--gold);
-    color: #fff;
+    background-color: var(--text-dark);
+    color: var(--gold);
     border: 1px solid var(--gold);
 }
 .btn-primary:hover {
-    background-color: var(--gold-hover);
-    border-color: var(--gold-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(179, 139, 77, 0.35);
+    background-color: var(--gold);
+    color: var(--text-dark);
+    border-color: var(--gold);
+    letter-spacing: 3.5px;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(212, 175, 55, 0.35);
 }
+
+/* Secondary – ghost button, transparent, black border & text */
 .btn-secondary {
     background-color: transparent;
     color: var(--text-dark);
@@ -324,11 +332,14 @@ nav a:hover::after { width: 100%; }
 }
 .btn-secondary:hover {
     background-color: var(--text-dark);
-    color: #fff;
-    transform: translateY(-1px);
+    color: var(--gold);
+    border-color: var(--text-dark);
+    letter-spacing: 3.5px;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(26, 26, 26, 0.2);
 }
 
-/* 6. Bottom signature */
+/* 6. Bottom signature tag */
 .bottom-tag {
     position: relative;
     z-index: 1;
@@ -339,13 +350,17 @@ nav a:hover::after { width: 100%; }
     align-items: center;
     gap: 10px;
 }
+.ornament-small {
+    color: var(--gold);
+    font-size: 10px;
+}
 .tag-text {
     font-family: var(--font-heading);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     letter-spacing: 4px;
     color: var(--text-dark);
     text-transform: uppercase;
-    opacity: 0.65;
+    opacity: 0.55;
 }
 
 /* ============================================================
@@ -393,7 +408,7 @@ nav a:hover::after { width: 100%; }
     font-size: clamp(2rem, 3.5vw, 3rem);
     margin-bottom: 1.6rem;
     color: var(--text-dark);
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1.25;
 }
 .hook-text p {
@@ -405,7 +420,7 @@ nav a:hover::after { width: 100%; }
 }
 .section-tag {
     font-family: var(--font-sans);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     letter-spacing: 4px;
     text-transform: uppercase;
     color: var(--gold);
@@ -427,8 +442,13 @@ section { padding: 100px 5%; }
     font-size: clamp(2rem, 3vw, 2.5rem);
     font-weight: 400;
     margin-bottom: 8px;
+    color: var(--text-dark);
 }
-.section-header p { color: var(--text-light); font-family: var(--font-sans); font-size: 0.95rem; }
+.section-header p {
+    color: var(--text-light);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+}
 .divider {
     height: 1px;
     width: 60px;
@@ -464,6 +484,7 @@ section { padding: 100px 5%; }
     font-family: var(--font-heading);
     font-size: 1.4rem;
     margin-bottom: 10px;
+    color: var(--text-dark);
 }
 .category-card p {
     font-family: var(--font-sans);
@@ -499,9 +520,10 @@ section { padding: 100px 5%; }
 }
 .filter-btn.active {
     background-color: var(--gold);
-    color: #fff;
+    color: var(--text-dark);
     border-color: var(--gold);
-    box-shadow: 0 4px 10px rgba(179, 139, 77, 0.3);
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+    font-weight: 500;
 }
 
 /* ============================================================
@@ -574,12 +596,14 @@ section { padding: 100px 5%; }
 }
 .quick-view-btn:hover {
     background: var(--gold);
+    color: var(--text-dark);
     transform: scale(1.04);
 }
 .product-id {
     font-family: var(--font-heading);
     font-size: 1.1rem;
     margin-bottom: 4px;
+    color: var(--text-dark);
 }
 .product-price {
     color: var(--text-light);
@@ -591,7 +615,7 @@ section { padding: 100px 5%; }
     top: 12px;
     right: 12px;
     background: var(--gold);
-    color: #fff;
+    color: var(--text-dark);
     font-family: var(--font-sans);
     font-size: 0.68rem;
     text-transform: uppercase;
@@ -599,7 +623,7 @@ section { padding: 100px 5%; }
     padding: 4px 11px;
     border-radius: var(--radius-pill);
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(179, 139, 77, 0.4);
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
     z-index: 5;
 }
 .show-more-container { text-align: center; margin-top: 50px; }
@@ -619,7 +643,7 @@ section { padding: 100px 5%; }
 }
 .show-more-btn:hover {
     background-color: var(--gold);
-    color: #fff;
+    color: var(--text-dark);
 }
 
 /* ============================================================
@@ -749,6 +773,7 @@ section { padding: 100px 5%; }
     font-size: 1.8rem;
     margin-bottom: 8px;
     line-height: 1.2;
+    color: var(--text-dark);
 }
 .modal-price {
     font-family: var(--font-sans);
@@ -903,7 +928,7 @@ section { padding: 100px 5%; }
     width: 100%;
     padding: 15px 24px;
     background-color: var(--gold);
-    color: #ffffff;
+    color: var(--text-dark);
     font-family: var(--font-sans);
     font-size: 0.82rem;
     font-weight: 600;
@@ -926,10 +951,10 @@ section { padding: 100px 5%; }
 }
 .whatsapp-cta-btn:hover {
     background-color: var(--gold-hover);
-    color: #ffffff;
+    color: var(--text-dark);
     border-color: var(--gold);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(179, 139, 77, 0.5);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.5);
 }
 
 /* ============================================================
@@ -1055,7 +1080,7 @@ section { padding: 100px 5%; }
     align-items: flex-end;
 }
 .footer-map-container iframe {
-    border: 1px solid rgba(179, 139, 77, 0.3);
+    border: 1px solid rgba(212, 175, 55, 0.3);
     width: 100%;
     height: 220px;
     border-radius: var(--radius-md);
@@ -1073,11 +1098,11 @@ section { padding: 100px 5%; }
     text-transform: uppercase;
     letter-spacing: 1px;
     padding: 8px 20px;
-    border: 1px solid rgba(179, 139, 77, 0.4);
+    border: 1px solid rgba(212, 175, 55, 0.4);
     border-radius: var(--radius-pill);
     transition: all 0.25s;
 }
-.map-link:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+.map-link:hover { background: var(--gold); color: var(--text-dark); border-color: var(--gold); }
 .footer-bottom {
     text-align: center;
     margin-top: 56px;
@@ -1087,26 +1112,37 @@ section { padding: 100px 5%; }
 .footer-copy { font-family: var(--font-sans); font-size: 0.78rem; color: #666; }
 
 /* ============================================================
-   STICKY WHATSAPP BUTTON
+   STICKY WHATSAPP BUTTON – Premium Monochrome/Gold Aesthetic
    ============================================================ */
 .sticky-whatsapp {
     position: fixed;
     bottom: 28px;
     right: 28px;
-    background-color: #25D366;
-    color: white;
+    background-color: var(--text-dark);
+    color: var(--gold);
     width: 58px;
     height: 58px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1.5px solid rgba(212, 175, 55, 0.35);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.sticky-whatsapp:hover { transform: scale(1.14); }
-.sticky-whatsapp svg { width: 32px; height: 32px; fill: currentColor; }
+.sticky-whatsapp:hover {
+    background-color: var(--gold);
+    color: var(--text-dark);
+    border-color: var(--gold);
+    transform: scale(1.12);
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.45);
+}
+.sticky-whatsapp svg {
+    width: 30px;
+    height: 30px;
+    fill: currentColor;
+}
 
 /* ============================================================
    RESPONSIVE
@@ -1116,6 +1152,9 @@ section { padding: 100px 5%; }
 @media (max-width: 1024px) {
     .hook-container { gap: 3.5rem; }
     .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-body {
+        padding-left: clamp(2rem, 8vw, 5rem);
+    }
 }
 
 /* Tablet */
@@ -1126,6 +1165,10 @@ section { padding: 100px 5%; }
     .modal-info { padding: 28px 24px; overflow-y: unset; }
     .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
     .footer-map-container { align-items: center; }
+    .hero-body {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
 }
 
 /* Mobile large */
@@ -1135,14 +1178,32 @@ section { padding: 100px 5%; }
     .site-header { padding: 0 1.5rem; }
     .header-inner { flex-direction: column; gap: 0.5rem; justify-content: center; }
     .site-header { height: auto; padding: 0.8rem 1.5rem; }
-    .brand-logo { height: 60px; }  /* slightly smaller on mobile */
+    .brand-logo { height: 60px; }
 
-    nav ul { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+    nav ul { flex-wrap: wrap; justify-content: center; gap: 1.2rem; }
 
-    .hero-body { padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 20px; }
-    .hero-content { max-width: 100%; align-items: center; text-align: center; }
-    .cta-group { max-width: 100%; align-items: center; }
-    .btn { width: 90%; }
+    .hero-body {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    .hero-content {
+        max-width: 100%;
+        align-items: flex-start;
+        text-align: left;
+    }
+    .main-heading {
+        font-size: clamp(2rem, 7vw, 3rem);
+    }
+    .cta-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 1rem;
+    }
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
 
     .hook-container { flex-direction: column; text-align: center; gap: 2.5rem; }
     .hook-text h2 { font-size: 2.2rem; }
@@ -1153,6 +1214,10 @@ section { padding: 100px 5%; }
     .products-grid { grid-template-columns: 1fr; }
     .preloader-logo { max-width: 80vw; max-height: 60vh; }
     .modal-content { max-height: 100vh; border-radius: 0; }
+    .hero-body {
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
+    }
 }
 
 /* No-products message */
