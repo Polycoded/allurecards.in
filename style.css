@@ -5,7 +5,7 @@
    ============================================================ */
 
 /* ---------- CSS VARIABLES ---------- */
-:root {
+:root {p
     --gold:       #b68d53;      /* Primary gold */
     --gold-dark:  #8c6835;      /* Darker gold for hover states */
     --gold-light: #d4af7a;      /* Lighter gold accent */
@@ -202,7 +202,7 @@ nav a:hover {
     flex: 1;
     display: flex;
     align-items: center;
-    padding: 120px 10% 60px;
+    padding: 0px 10% 60px;
 }
 
 .hero-content {
