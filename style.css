@@ -123,11 +123,15 @@ body.loaded #preloader {
     align-items: center;
     background: transparent;
     border-bottom: none;
-    transition: background 0.3s, box-shadow 0.3s;
+    transition: background-color 0.4s ease, backdrop-filter 0.4s ease;
 }
 .site-header.scrolled {
     background: transparent;
     box-shadow: none;
+}
+.site-header:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
 }
 .header-inner {
     display: flex;
