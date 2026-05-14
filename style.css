@@ -5,7 +5,7 @@
    ============================================================ */
 
 /* ---------- CSS VARIABLES ---------- */
-:root {p
+:root {
     --gold:       #b68d53;      /* Primary gold */
     --gold-dark:  #8c6835;      /* Darker gold for hover states */
     --gold-light: #d4af7a;      /* Lighter gold accent */
