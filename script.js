@@ -479,6 +479,7 @@
             .replace(/'/g, '&#39;');
     }
     /* Subtle header background when hovering navigation */
+        /* Subtle header background when hovering navigation */
     (function() {
         const headerEl = document.querySelector('.site-header');
         const navEl = document.querySelector('.site-header nav');
@@ -491,4 +492,5 @@
                 headerEl.classList.remove('nav-active');
             });
         }
-})();
+    })();
+})();   // ← THIS closes the outer IIFE
