@@ -1,29 +1,45 @@
-/**
- * ALLURE – app.js
- * Handles: preloader, products, filtering,
- *          quick-view modal (incl. size, material, extra charges),
- *          price calculator, lightbox, scroll animations
- */
+/* ============================================================
+   ALLURE – SCRIPTS
+   Preloader hide + header scroll state
+   (Homepage – locked)
+   ============================================================ */
+
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+            preloader.classList.add("hide");
+        }
+    }, 1600);
+});
+
+const header = document.getElementById("site-header");
+if (header) {
+    window.addEventListener("scroll", () => {
+        header.classList.toggle("scrolled", window.scrollY > 60);
+    }, { passive: true });
+}
+
+
+/* ============================================================
+   BELOW: PORTFOLIO & MODAL FUNCTIONALITY
+   (added after homepage JS – no changes to the locked part)
+   ============================================================ */
 
 (function () {
     'use strict';
 
-    /* ============================================================
-       CONSTANTS
-    ============================================================ */
+    /* ---- CONSTANTS ---- */
     const WHATSAPP_NUMBER  = '919526577999';
     const DEFAULT_DESC     = 'Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.';
     const ITEMS_PER_PAGE   = 12;
 
-    /* ============================================================
-       DOM REFERENCES
-    ============================================================ */
+    /* ---- DOM ELEMENTS ---- */
     const productContainer  = document.getElementById('product-container');
     const showMoreBtn       = document.getElementById('show-more-btn');
     const filterContainer   = document.getElementById('filter-container');
     const categoryGrid      = document.getElementById('category-grid');
 
-    // Modal elements
     const modal             = document.getElementById('quick-view-modal');
     const closeModalBtn     = document.getElementById('close-modal');
     const modalImg          = document.getElementById('modal-main-img');
@@ -33,7 +49,6 @@
     const modalCategoryLbl  = document.getElementById('modal-category-label');
     const modalDescText     = document.getElementById('modal-desc-text');
 
-    // Calculator elements
     const qtySelect         = document.getElementById('modal-qty-select');
     const calcCardCost      = document.getElementById('calc-card-cost');
     const calcPrintingVal   = document.getElementById('calc-printing-val');
@@ -45,7 +60,6 @@
     const calcFinalTotal    = document.getElementById('calc-final-total');
     const whatsappBtn       = document.getElementById('modal-whatsapp-btn');
 
-    // Lightbox elements
     const galleryOverlay    = document.getElementById('gallery-overlay');
     const galleryImg        = document.getElementById('gallery-img');
     const galleryClose      = document.getElementById('gallery-close');
@@ -53,9 +67,7 @@
     const galleryNext       = document.getElementById('gallery-next');
     const galleryCounter    = document.getElementById('gallery-counter');
 
-    /* ============================================================
-       STATE
-    ============================================================ */
+    /* ---- STATE ---- */
     let allProducts         = [];
     let filteredProducts    = [];
     let visibleCount        = 0;
@@ -69,40 +81,26 @@
     let currentProductCat   = '';
     let currentMinOrder     = 100;
 
-    // Extra charges storage for calculator
-    window.currentExtraCharges = [];
-
-    /* ============================================================
-       1. PRELOADER – wait for hero background (PNG), then 2s timer
-    ============================================================ */
-    (function initPreloader() {
-        const heroImgSrc = 'assets/cards/final_background.png';  // corrected to PNG
-        const img = new Image();
-
-        img.onload = function() {
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-            }, 2000);
-        };
-
-        img.onerror = function() {
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-            }, 3000);
-        };
-
-        img.src = heroImgSrc;
-    })();
-
-    /* ============================================================
-       2. FOOTER YEAR
-    ============================================================ */
+    /* ---- FOOTER YEAR ---- */
     const yearEl = document.getElementById('currentYear');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    /* ============================================================
-       3. FETCH CARDS
-    ============================================================ */
+    /* ---- HELPERS ---- */
+    function getUniqueCategories() {
+        return [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    }
+
+    function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    /* ---- FETCH CARDS ---- */
     fetch('./data/cards.json')
         .then(res => {
             if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -114,10 +112,7 @@
                 images:      (p.images && p.images.length > 0) ? p.images : ['assets/cards/placeholder.jpg'],
                 featured:    p.featured  || false,
                 minOrder:    p.minOrder  || 100,
-                description: p.description || DEFAULT_DESC,
-                size:        p.size      || '210×155 mm',
-                material:    p.material  || 'Pearl Shimmer Cardstock',
-                extraCharges: p.extraCharges || []
+                description: p.description || DEFAULT_DESC
             }));
 
             buildCategoryMenu();
@@ -131,9 +126,7 @@
             }
         });
 
-    /* ============================================================
-       4. CATEGORY CARDS
-    ============================================================ */
+    /* ---- CATEGORY CARDS ---- */
     const CATEGORY_DESCRIPTIONS = {
         Heritage: 'Rich, traditional luxury',
         Minimal:  'Understated elegance',
@@ -163,15 +156,12 @@
         const cat = card.dataset.category;
         setActiveFilter(cat);
         applyFilter(cat);
-        document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
     }
 
-    /* ============================================================
-       5. FILTER BUTTONS
-    ============================================================ */
+    /* ---- FILTER BUTTONS ---- */
     function buildFilterButtons() {
         filterContainer.querySelectorAll('.filter-btn:not([data-filter="All"])').forEach(b => b.remove());
-
         getUniqueCategories().forEach(cat => {
             const btn = document.createElement('button');
             btn.className = 'filter-btn';
@@ -197,9 +187,7 @@
         });
     }
 
-    /* ============================================================
-       6. APPLY FILTER / RENDER GRID
-    ============================================================ */
+    /* ---- RENDER PRODUCTS ---- */
     function applyFilter(filter) {
         currentFilter = filter;
         filteredProducts = filter === 'All'
@@ -207,7 +195,6 @@
             : allProducts.filter(p => p.category === filter);
 
         filteredProducts.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-
         visibleCount = Math.min(ITEMS_PER_PAGE, filteredProducts.length);
         productContainer.innerHTML = '';
 
@@ -220,8 +207,6 @@
                 .join('');
         }
         updateShowMoreBtn();
-        // Observe new fade-up elements
-        setTimeout(observeAnimatedElements, 50);
     }
 
     function createCardHTML(product) {
@@ -230,7 +215,7 @@
             ? '<span class="featured-badge">Featured</span>'
             : '';
         return `
-            <div class="product-card fade-up">
+            <div class="product-card">
                 <div class="product-img-wrapper">
                     ${featuredBadge}
                     <img src="${escapeHtml(product.images[0])}"
@@ -250,7 +235,6 @@
         `;
     }
 
-    // Event delegation for quick-view buttons
     productContainer.addEventListener('click', e => {
         const btn = e.target.closest('.quick-view-btn');
         if (!btn) return;
@@ -262,7 +246,6 @@
         }
     });
 
-    // Show more
     showMoreBtn.addEventListener('click', () => {
         const nextCount = Math.min(visibleCount + ITEMS_PER_PAGE, filteredProducts.length);
         const newHTML = filteredProducts
@@ -272,42 +255,13 @@
         productContainer.insertAdjacentHTML('beforeend', newHTML);
         visibleCount = nextCount;
         updateShowMoreBtn();
-        setTimeout(observeAnimatedElements, 50);
     });
 
     function updateShowMoreBtn() {
         showMoreBtn.style.display = visibleCount < filteredProducts.length ? 'inline-block' : 'none';
     }
 
-    /* ============================================================
-       7. SCROLL ANIMATIONS (Intersection Observer)
-    ============================================================ */
-    const animationObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('appear');
-                animationObserver.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.15,
-        rootMargin: '0px 0px -50px 0px'
-    });
-
-    function observeAnimatedElements() {
-        document.querySelectorAll('.fade-up:not(.appear)').forEach(el => {
-            animationObserver.observe(el);
-        });
-    }
-
-    // Observe initial elements when DOM is ready
-    window.addEventListener('load', () => {
-        setTimeout(observeAnimatedElements, 100);
-    });
-
-    /* ============================================================
-       8. QUICK VIEW MODAL
-    ============================================================ */
+    /* ---- MODAL ---- */
     function openProductModal(product) {
         currentProductName  = product.id;
         currentProductCat   = product.category;
@@ -318,21 +272,11 @@
         modalTitle.textContent       = product.name || product.id;
         modalCategoryLbl.textContent = `Allure ${product.category} Collection`;
         modalUnitPrice.textContent   = `Rs. ${product.price} / card`;
+        modalDescText.textContent    = product.description || DEFAULT_DESC;
 
-        // Set product details (size, material, description)
-        document.getElementById('modal-size').textContent = product.size || '210×155 mm';
-        document.getElementById('modal-material').textContent = product.material || 'Pearl Shimmer Cardstock';
-        modalDescText.textContent = product.description || DEFAULT_DESC;
-
-        // Extra charges
-        window.currentExtraCharges = product.extraCharges || [];
-        displayExtraCharges(window.currentExtraCharges);
-
-        // Main image
         modalImg.src = currentImages[0] || '';
         modalImg.alt = product.name || product.id;
 
-        // Thumbnails
         thumbnailRow.innerHTML = '';
         if (currentImages.length > 1) {
             currentImages.forEach((src, idx) => {
@@ -352,37 +296,19 @@
             });
         }
 
-        // Calculator
         populateQtyDropdown(currentMinOrder);
         qtySelect.removeEventListener('change', calculateTotal);
         qtySelect.addEventListener('change', calculateTotal);
         calculateTotal();
 
-        // Open
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
         closeModalBtn.focus();
     }
 
-    function displayExtraCharges(charges) {
-        const section = document.getElementById('modal-extra-charges');
-        const list = document.getElementById('modal-extra-charges-list');
-        if (!charges || charges.length === 0) {
-            section.style.display = 'none';
-            return;
-        }
-        section.style.display = 'block';
-        list.innerHTML = charges.map(charge => `
-            <div class="extra-charge-row">
-                <span class="extra-charge-name">${escapeHtml(charge.name)}</span>
-            </div>
-        `).join('');
-    }
-
-    /* ---- Close modal ---- */
     function closeModal() {
-        closeGallery(/* fromModal= */ true);
+        closeGallery(true);
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = 'auto';
@@ -394,9 +320,6 @@
         if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
     });
 
-    /* ============================================================
-       9. PRICE CALCULATOR
-    ============================================================ */
     function populateQtyDropdown(minOrder) {
         qtySelect.innerHTML = '';
         for (let qty = minOrder; qty <= 1500; qty += 50) {
@@ -414,78 +337,46 @@
         const printingFee   = qty < 200 ? 600 : 0;
         const printingWaived = printingFee === 0 ? 600 : 0;
 
-        // Extra charges (fixed)
-        const extraTotal = (window.currentExtraCharges || []).reduce((sum, ch) => sum + ch.price, 0);
-
         let factor = 1.0;
         let discountPct = 0;
         if      (qty >= 1000) { factor = 0.90; discountPct = 10; }
         else if (qty >= 500)  { factor = 0.95; discountPct = 5;  }
 
         const discountAmt = Math.round(cardCost * (1 - factor));
-        const finalTotal  = Math.round(cardCost * factor) + printingFee + extraTotal;
+        const finalTotal  = Math.round(cardCost * factor) + printingFee;
         const totalSavings = printingWaived + discountAmt;
 
-        // Card cost
         calcCardCost.textContent = `Rs. ${cardCost.toLocaleString()}`;
 
-        // Printing
         if (printingFee > 0) {
             calcPrintingVal.innerHTML = 'Rs. 600';
         } else {
             calcPrintingVal.innerHTML = '<span class="waived">Rs. 600</span> <span class="saved-text">FREE</span>';
         }
 
-        // Discount row
         discountRow.style.display = discountPct > 0 ? 'flex' : 'none';
         if (discountPct > 0) {
             calcDiscountVal.innerHTML = `− Rs. ${discountAmt.toLocaleString()} (${discountPct}% off)`;
             calcDiscountVal.style.color = '#2e7d32';
         }
 
-        // Savings row
         savingsRow.style.display = totalSavings > 0 ? 'flex' : 'none';
         if (totalSavings > 0) {
             calcSavingsVal.textContent = `Rs. ${totalSavings.toLocaleString()}`;
         }
 
-        // Extra charges row in calculator
-        const extraRow = document.getElementById('extra-charges-row');
-        if (extraTotal > 0) {
-            if (!extraRow) {
-                const divider = document.querySelector('.calc-summary .divider-sm');
-                const newRow = document.createElement('div');
-                newRow.id = 'extra-charges-row';
-                newRow.className = 'summary-row extra-charges-summary';
-                newRow.innerHTML = '<span>Additional Charges</span><span id="calc-extra-total">Rs. 0</span>';
-                divider.parentNode.insertBefore(newRow, divider);
-            }
-            document.getElementById('calc-extra-total').textContent = `Rs. ${extraTotal.toLocaleString()}`;
-        } else {
-            if (extraRow) extraRow.remove();
-        }
-
-        // Final total
         calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
 
-        // WhatsApp message
-        let extraMsg = '';
-        if (extraTotal > 0 && window.currentExtraCharges.length > 0) {
-            extraMsg = '\n*Additional Services:* ' +
-                window.currentExtraCharges.map(c => c.name).join(', ') +
-                ' (Rs. ' + extraTotal.toLocaleString() + ')';
-        }
-        const message = `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
-                        `*Design:* ${currentProductName} (${currentProductCat} Collection)\n` +
-                        `*Quantity:* ${qty}\n` +
-                        `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}${extraMsg}\n\n` +
-                        `Please let me know how to proceed.`;
+        const message =
+            `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
+            `*Design:* ${currentProductName} (${currentProductCat} Collection)\n` +
+            `*Quantity:* ${qty}\n` +
+            `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}\n\n` +
+            `Please let me know how to proceed.`;
         whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     }
 
-    /* ============================================================
-       10. LIGHTBOX
-    ============================================================ */
+    /* ---- LIGHTBOX ---- */
     modalImg.addEventListener('click', () => {
         if (!currentImages.length) return;
         const activeSrc = modalImg.getAttribute('src');
@@ -558,22 +449,5 @@
                 break;
         }
     });
-
-    /* ============================================================
-       UTILS
-    ============================================================ */
-    function getUniqueCategories() {
-        return [...new Set(allProducts.map(p => p.category).filter(Boolean))];
-    }
-
-    function escapeHtml(str) {
-        if (str == null) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
 
 })();
