@@ -16,10 +16,14 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="allure_page-0003.jpg">
 
-    <!-- Fonts -->
+    <!-- Fonts (with display=swap to prevent invisible text) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Preload critical assets -->
+    <link rel="preload" as="image" href="assets/cards/final_background.jpg">
+    <link rel="preload" as="image" href="goldallure.png">
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
@@ -40,7 +44,7 @@
     <section id="home" class="hero">
         <div class="overlay-gradient" aria-hidden="true"></div>
 
-        <!-- STICKY HEADER (outside hero flow so it stays on top) -->
+        <!-- STICKY HEADER -->
         <header class="site-header">
             <div class="header-inner">
                 <div class="brand">
@@ -87,7 +91,7 @@
     <main id="main-content">
 
         <!-- Our Story -->
-        <section id="our-story" class="emotional-hook">
+        <section id="our-story" class="emotional-hook fade-up">
             <div class="hook-container">
                 <div class="hook-image">
                     <img src="assets/cards/not_just.jpg"
@@ -103,7 +107,7 @@
         </section>
 
         <!-- Collections -->
-        <section id="collections" class="categories">
+        <section id="collections" class="categories fade-up">
             <div class="section-header">
                 <h2>Our Collections</h2>
                 <div class="divider"></div>
@@ -113,7 +117,7 @@
         </section>
 
         <!-- Portfolio / Shop -->
-        <section id="shop" class="products-section">
+        <section id="shop" class="products-section fade-up">
             <div class="section-header">
                 <h2>The Portfolio</h2>
                 <p>Hover to preview. Click for details. Each piece is a testament to craftsmanship.</p>
@@ -205,6 +209,19 @@
                     <h3 id="modal-title">Product ID</h3>
                     <p class="modal-price" id="modal-unit-price">Rs. 0 / card</p>
 
+                    <!-- NEW: Product specs (size | material) -->
+                    <div class="modal-specs">
+                        <span id="modal-size">210×155 mm</span>
+                        <span class="spec-divider" aria-hidden="true">|</span>
+                        <span id="modal-material">Pearl Shimmer Cardstock</span>
+                    </div>
+
+                    <!-- NEW: Extra charges (only shown if present) -->
+                    <div id="modal-extra-charges" class="extra-charges-section" style="display:none;">
+                        <h4 class="extra-charges-title">Additional Services</h4>
+                        <div id="modal-extra-charges-list"></div>
+                    </div>
+
                     <div class="modal-description">
                         <p id="modal-desc-text">Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.</p>
                     </div>
@@ -241,7 +258,7 @@
                         </div>
                     </div>
 
-                    <!-- ✅ FIXED: WhatsApp CTA Button -->
+                    <!-- WhatsApp CTA Button -->
                     <a href="#"
                        id="modal-whatsapp-btn"
                        target="_blank"
