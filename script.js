@@ -478,5 +478,17 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
     }
-
+    /* Subtle header background when hovering navigation */
+    (function() {
+        const headerEl = document.querySelector('.site-header');
+        const navEl = document.querySelector('.site-header nav');
+    
+        if (headerEl && navEl) {
+            navEl.addEventListener('mouseenter', () => {
+                headerEl.classList.add('nav-active');
+            });
+            navEl.addEventListener('mouseleave', () => {
+                headerEl.classList.remove('nav-active');
+            });
+        }
 })();
