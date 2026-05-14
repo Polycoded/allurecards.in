@@ -504,7 +504,7 @@ section { padding: 100px 5%; }
 
 .product-img-wrapper {
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 4 / 5;
     background-color: transparent;
     position: relative;
     overflow: hidden;
