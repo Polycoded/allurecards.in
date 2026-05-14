@@ -1050,12 +1050,11 @@
             align-items: start;
         }
 
-        .footer-logo {
-            font-family: var(--font-display);
-            font-size: 2.4rem;
-            letter-spacing: 4px;
-            color: var(--lavender);
-            margin-bottom: 4px;
+        .footer-logo-img {
+            max-width: 200px;      /* adjust to taste */
+            height: auto;
+            display: block;
+            margin-bottom: 10px;
         }
 
         .footer-divider {
@@ -1459,52 +1458,52 @@
 
     </main>
 
-    <!-- ========== FOOTER / CONTACT ========== -->
-    <footer id="contact" class="footer" role="contentinfo">
-        <div class="footer-inner">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <div class="footer-logo" aria-label="Allure">ALLURE</div>
-                    <div class="footer-divider"></div>
-                    <p class="footer-tagline">by <strong>Impressions Wedding Cards</strong></p>
-                    <address class="footer-address">
-                        Impressions Castle, Thrissur – Palghat Road,<br>
-                        Priyadarsini Nagar, Paravattani,<br>
-                        Thrissur, Kerala — 680005
-                    </address>
-                    <p class="footer-contact">
-                        <a href="tel:+919526577999">+91 95265 77 999</a> ·
-                        <a href="mailto:allure@impressions.in">allure@impressions.in</a>
-                    </p>
-                    <div class="footer-social">
-                        <a href="https://instagram.com/impressionsweddingcards" target="_blank" rel="noopener noreferrer">Instagram</a>
-                        <a href="https://facebook.com/impressionsweddingcards" target="_blank" rel="noopener noreferrer">Facebook</a>
-                        <a href="https://www.youtube.com/@impressionsweddingcards" target="_blank" rel="noopener noreferrer">YouTube</a>
-                    </div>
-                </div>
-                <div class="footer-map-container">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3922.5!2d76.22!3d10.52!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDMxJzEyLjAiTiA3NsKwMTMnMTIuMCJF!5e0!3m2!1sen!2sin!4v1700000000000"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
-                        title="Allure by Impressions — Atelier Location">
-                    </iframe>
-                    <a href="https://maps.google.com/?q=Impressions+Castle+Paravattani+Thrissur+Kerala"
-                       class="map-link" target="_blank" rel="noopener noreferrer">
-                        Get Directions to our Atelier
-                    </a>
+   <footer id="contact" class="footer" role="contentinfo">
+    <div class="footer-inner">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <img src="assets/cards/impressions-logo.png" 
+                     alt="Impressions Wedding Cards" 
+                     class="footer-logo-img">
+                <div class="footer-divider"></div>
+                <p class="footer-tagline">by <strong>Impressions Wedding Cards</strong></p>
+                <address class="footer-address">
+                    Impressions Castle, Thrissur – Palghat Road,<br>
+                    Priyadarsini Nagar, Paravattani,<br>
+                    Thrissur, Kerala — 680005
+                </address>
+                <p class="footer-contact">
+                    <a href="tel:+919526577999">+91 95265 77 999</a> ·
+                    <a href="mailto:allure@impressions.in">allure@impressions.in</a>
+                </p>
+                <div class="footer-social">
+                    <a href="https://instagram.com/impressionsweddingcards" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://facebook.com/impressionsweddingcards" target="_blank" rel="noopener noreferrer">Facebook</a>
+                    <a href="https://www.youtube.com/@impressionsweddingcards" target="_blank" rel="noopener noreferrer">YouTube</a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p class="footer-copy">
-                    © <span id="currentYear"></span> Allure by Impressions Wedding Cards.
-                    All rights reserved. Crafted with devotion in Thrissur.
-                </p>
+            <div class="footer-map-container">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3922.5!2d76.22!3d10.52!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDMxJzEyLjAiTiA3NsKwMTMnMTIuMCJF!5e0!3m2!1sen!2sin!4v1700000000000"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Allure by Impressions — Atelier Location">
+                </iframe>
+                <a href="https://maps.google.com/?q=Impressions+Castle+Paravattani+Thrissur+Kerala"
+                   class="map-link" target="_blank" rel="noopener noreferrer">
+                    Get Directions to our Atelier
+                </a>
             </div>
         </div>
-    </footer>
-
+        <div class="footer-bottom">
+            <p class="footer-copy">
+                © <span id="currentYear"></span> Allure by Impressions Wedding Cards.
+                All rights reserved. Crafted with devotion in Thrissur.
+            </p>
+        </div>
+    </div>
+</footer>
     <!-- ========== QUICK VIEW MODAL ========== -->
     <div id="quick-view-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content">
