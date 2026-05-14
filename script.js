@@ -1,7 +1,6 @@
 /* ============================================================
    ALLURE – SCRIPTS
-   Preloader hide + header scroll state
-   (Homepage – locked)
+   Preloader + header scroll state + mobile nav + portfolio
    ============================================================ */
 
 window.addEventListener("load", () => {
@@ -20,21 +19,59 @@ if (header) {
     }, { passive: true });
 }
 
+/* ============================================================
+   MOBILE NAV – HAMBURGER TOGGLE
+   ============================================================ */
+(function () {
+    const navToggle  = document.getElementById('nav-toggle');
+    const mobileNav  = document.getElementById('mobile-nav');
+    const navLinks   = mobileNav ? mobileNav.querySelectorAll('a') : [];
+
+    if (!navToggle || !mobileNav) return;
+
+    function openMenu() {
+        navToggle.classList.add('open');
+        mobileNav.classList.add('open');
+        mobileNav.setAttribute('aria-hidden', 'false');
+        navToggle.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+        navToggle.classList.remove('open');
+        mobileNav.classList.remove('open');
+        mobileNav.setAttribute('aria-hidden', 'true');
+        navToggle.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+
+    navToggle.addEventListener('click', () => {
+        navToggle.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && mobileNav.classList.contains('open')) closeMenu();
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) closeMenu();
+    }, { passive: true });
+})();
 
 /* ============================================================
-   BELOW: PORTFOLIO & MODAL FUNCTIONALITY
-   (added after homepage JS – no changes to the locked part)
+   PORTFOLIO & MODAL FUNCTIONALITY
    ============================================================ */
-
 (function () {
     'use strict';
 
-    /* ---- CONSTANTS ---- */
     const WHATSAPP_NUMBER  = '919526577999';
     const DEFAULT_DESC     = 'Experience the timeless elegance of this design. Crafted on premium materials with exquisite detailing.';
     const ITEMS_PER_PAGE   = 12;
 
-    /* ---- DOM ELEMENTS ---- */
     const productContainer  = document.getElementById('product-container');
     const showMoreBtn       = document.getElementById('show-more-btn');
     const filterContainer   = document.getElementById('filter-container');
@@ -48,6 +85,9 @@ if (header) {
     const modalUnitPrice    = document.getElementById('modal-unit-price');
     const modalCategoryLbl  = document.getElementById('modal-category-label');
     const modalDescText     = document.getElementById('modal-desc-text');
+
+    const modalDetails      = document.getElementById('modal-details');
+    const modalExtraCharges = document.getElementById('modal-extra-charges');
 
     const qtySelect         = document.getElementById('modal-qty-select');
     const calcCardCost      = document.getElementById('calc-card-cost');
@@ -67,25 +107,21 @@ if (header) {
     const galleryNext       = document.getElementById('gallery-next');
     const galleryCounter    = document.getElementById('gallery-counter');
 
-    /* ---- STATE ---- */
     let allProducts         = [];
     let filteredProducts    = [];
     let visibleCount        = 0;
     let currentFilter       = 'All';
-
     let currentImages       = [];
     let currentGalleryIndex = 0;
-
     let currentUnitPrice    = 0;
     let currentProductName  = '';
     let currentProductCat   = '';
     let currentMinOrder     = 100;
+    let currentExtraCharges = [];
 
-    /* ---- FOOTER YEAR ---- */
     const yearEl = document.getElementById('currentYear');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    /* ---- HELPERS ---- */
     function getUniqueCategories() {
         return [...new Set(allProducts.map(p => p.category).filter(Boolean))];
     }
@@ -100,7 +136,6 @@ if (header) {
             .replace(/'/g, '&#39;');
     }
 
-    /* ---- FETCH CARDS ---- */
     fetch('./data/cards.json')
         .then(res => {
             if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -126,7 +161,6 @@ if (header) {
             }
         });
 
-    /* ---- CATEGORY CARDS ---- */
     const CATEGORY_DESCRIPTIONS = {
         Heritage: 'Rich, traditional luxury',
         Minimal:  'Understated elegance',
@@ -159,7 +193,6 @@ if (header) {
         document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
     }
 
-    /* ---- FILTER BUTTONS ---- */
     function buildFilterButtons() {
         filterContainer.querySelectorAll('.filter-btn:not([data-filter="All"])').forEach(b => b.remove());
         getUniqueCategories().forEach(cat => {
@@ -187,7 +220,6 @@ if (header) {
         });
     }
 
-    /* ---- RENDER PRODUCTS ---- */
     function applyFilter(filter) {
         currentFilter = filter;
         filteredProducts = filter === 'All'
@@ -209,6 +241,7 @@ if (header) {
         updateShowMoreBtn();
     }
 
+    // Product card: only ID and price (no size/material)
     function createCardHTML(product) {
         const productJson  = encodeURIComponent(JSON.stringify(product));
         const featuredBadge = product.featured
@@ -261,21 +294,44 @@ if (header) {
         showMoreBtn.style.display = visibleCount < filteredProducts.length ? 'inline-block' : 'none';
     }
 
-    /* ---- MODAL ---- */
     function openProductModal(product) {
-        currentProductName  = product.id;
+        currentProductName  = product.id;               // used for WhatsApp message
         currentProductCat   = product.category;
         currentUnitPrice    = product.price;
         currentMinOrder     = product.minOrder || 100;
         currentImages       = product.images || [];
+        currentExtraCharges = product.extraCharges || [];
 
-        modalTitle.textContent       = product.name || product.id;
-        modalCategoryLbl.textContent = `Allure ${product.category} Collection`;
+        // Modal title is now the card ID
+        modalTitle.textContent       = product.id;
+        modalCategoryLbl.textContent = product.category
+            ? `Allure ${product.category} Collection`
+            : 'Allure Collection';
         modalUnitPrice.textContent   = `Rs. ${product.price} / card`;
         modalDescText.textContent    = product.description || DEFAULT_DESC;
 
+        // Size & material line
+        if (modalDetails) {
+            const parts = [];
+            if (product.size) parts.push(`Size: ${product.size}`);
+            if (product.material) parts.push(`Material: ${product.material}`);
+            modalDetails.textContent = parts.join(' · ');
+        }
+
+        // Extra charges list
+        if (modalExtraCharges) {
+            modalExtraCharges.innerHTML = '';
+            if (currentExtraCharges.length > 0) {
+                currentExtraCharges.forEach(ch => {
+                    const li = document.createElement('li');
+                    li.textContent = `${ch.name}: Rs. ${ch.price}`;
+                    modalExtraCharges.appendChild(li);
+                });
+            }
+        }
+
         modalImg.src = currentImages[0] || '';
-        modalImg.alt = product.name || product.id;
+        modalImg.alt = product.id;
 
         thumbnailRow.innerHTML = '';
         if (currentImages.length > 1) {
@@ -331,52 +387,114 @@ if (header) {
         }
     }
 
-    function calculateTotal() {
-        const qty           = parseInt(qtySelect.value, 10);
-        const cardCost      = qty * currentUnitPrice;
-        const printingFee   = qty < 200 ? 600 : 0;
-        const printingWaived = printingFee === 0 ? 600 : 0;
+function calculateTotal() {
+    const qty           = parseInt(qtySelect.value, 10);
+    const cardCost      = qty * currentUnitPrice;
+    const printingFee   = qty < 200 ? 600 : 0;
+    const printingWaived = printingFee === 0 ? 600 : 0;
 
-        let factor = 1.0;
-        let discountPct = 0;
-        if      (qty >= 1000) { factor = 0.90; discountPct = 10; }
-        else if (qty >= 500)  { factor = 0.95; discountPct = 5;  }
+    const extraTotal = currentExtraCharges.reduce((sum, ch) => sum + ch.price, 0);
 
-        const discountAmt = Math.round(cardCost * (1 - factor));
-        const finalTotal  = Math.round(cardCost * factor) + printingFee;
-        const totalSavings = printingWaived + discountAmt;
+    let factor = 1.0;
+    let discountPct = 0;
+    if      (qty >= 1000) { factor = 0.90; discountPct = 10; }
+    else if (qty >= 500)  { factor = 0.95; discountPct = 5;  }
 
-        calcCardCost.textContent = `Rs. ${cardCost.toLocaleString()}`;
+    const discountAmt = Math.round(cardCost * (1 - factor));
+    const finalTotal  = Math.round(cardCost * factor) + printingFee + extraTotal;
+    const totalSavings = printingWaived + discountAmt;
 
-        if (printingFee > 0) {
-            calcPrintingVal.innerHTML = 'Rs. 600';
-        } else {
-            calcPrintingVal.innerHTML = '<span class="waived">Rs. 600</span> <span class="saved-text">FREE</span>';
-        }
+    // 1. Card Cost
+    calcCardCost.textContent = `Rs. ${cardCost.toLocaleString()}`;
 
-        discountRow.style.display = discountPct > 0 ? 'flex' : 'none';
-        if (discountPct > 0) {
-            calcDiscountVal.innerHTML = `− Rs. ${discountAmt.toLocaleString()} (${discountPct}% off)`;
-            calcDiscountVal.style.color = '#2e7d32';
-        }
-
-        savingsRow.style.display = totalSavings > 0 ? 'flex' : 'none';
-        if (totalSavings > 0) {
-            calcSavingsVal.textContent = `Rs. ${totalSavings.toLocaleString()}`;
-        }
-
-        calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
-
-        const message =
-            `Hello Impressions! I would like to inquire about an Allure card design.\n\n` +
-            `*Design:* ${currentProductName} (${currentProductCat} Collection)\n` +
-            `*Quantity:* ${qty}\n` +
-            `*Estimated Total:* Rs. ${finalTotal.toLocaleString()}\n\n` +
-            `Please let me know how to proceed.`;
-        whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    // 2. Printing Cost (only when charged)
+    if (printingFee > 0) {
+        printingRow.style.display = 'flex';
+        calcPrintingVal.innerHTML = 'Rs. 600';
+    } else {
+        printingRow.style.display = 'none';   // completely hidden when free
     }
 
-    /* ---- LIGHTBOX ---- */
+    // 3. Volume Discount (if any)
+    discountRow.style.display = discountPct > 0 ? 'flex' : 'none';
+    if (discountPct > 0) {
+        calcDiscountVal.innerHTML = `− Rs. ${discountAmt.toLocaleString()} (${discountPct}% off)`;
+        calcDiscountVal.style.color = '#2e7d32';  // professional green
+        // no background, no other highlights
+    }
+
+    // 4. Extra Charges Breakdown (by name)
+    const calcSummary = document.querySelector('.calc-summary');
+    calcSummary.querySelectorAll('.extra-charge-item, .extra-charge-subtotal').forEach(el => el.remove());
+
+    if (currentExtraCharges.length > 0) {
+        const insertBefore = savingsRow;
+        currentExtraCharges.forEach(ch => {
+            const row = document.createElement('div');
+            row.className = 'summary-row extra-charge-item';
+            row.innerHTML = `<span>${escapeHtml(ch.name)}</span><span>Rs. ${ch.price.toLocaleString()}</span>`;
+            calcSummary.insertBefore(row, insertBefore);
+        });
+
+        if (currentExtraCharges.length > 1) {
+            const subtotalRow = document.createElement('div');
+            subtotalRow.className = 'summary-row extra-charge-subtotal';
+            subtotalRow.innerHTML = `<span>Total Extra Charges</span><span>Rs. ${extraTotal.toLocaleString()}</span>`;
+            calcSummary.insertBefore(subtotalRow, insertBefore);
+        }
+    }
+
+    // 5. You Save
+    savingsRow.style.display = totalSavings > 0 ? 'flex' : 'none';
+    if (totalSavings > 0) {
+        let parts = [];
+        if (printingWaived > 0) parts.push(`Printing free (Rs. ${printingWaived})`);
+        if (discountAmt > 0) parts.push(`${discountPct}% discount (Rs. ${discountAmt.toLocaleString()})`);
+        calcSavingsVal.innerHTML = parts.join('<br>');
+        // keep it clean – no background
+    }
+
+    // 6. Final Estimate
+    calcFinalTotal.textContent = `Rs. ${finalTotal.toLocaleString()}`;
+
+    // 7. WhatsApp message with full breakdown
+    const breakdownLines = [
+        `*Design:* ${currentProductName} (${currentProductCat} Collection)`,
+        `*Quantity:* ${qty}`,
+        ``,
+        `*Price Breakdown:*`,
+        `Card Cost: Rs. ${cardCost.toLocaleString()}`
+    ];
+
+    if (printingFee > 0) {
+        breakdownLines.push(`Printing Charge: Rs. ${printingFee}`);
+    } else {
+        breakdownLines.push(`Printing Charge: FREE (saved Rs. 600)`);
+    }
+
+    if (currentExtraCharges.length > 0) {
+        currentExtraCharges.forEach(ch => {
+            breakdownLines.push(`${ch.name}: Rs. ${ch.price}`);
+        });
+        if (currentExtraCharges.length > 1) {
+            breakdownLines.push(`Total Extra Charges: Rs. ${extraTotal.toLocaleString()}`);
+        }
+    }
+
+    if (discountAmt > 0) {
+        breakdownLines.push(`Volume Discount (${discountPct}%): – Rs. ${discountAmt.toLocaleString()}`);
+    }
+
+    breakdownLines.push(`───`);
+    breakdownLines.push(`*Final Estimate: Rs. ${finalTotal.toLocaleString()}*`);
+    breakdownLines.push(``);
+    breakdownLines.push(`Please let me know how to proceed.`);
+
+    const message = breakdownLines.join('\n');
+    whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
+    /* Lightbox */
     modalImg.addEventListener('click', () => {
         if (!currentImages.length) return;
         const activeSrc = modalImg.getAttribute('src');
