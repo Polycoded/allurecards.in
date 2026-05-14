@@ -208,6 +208,12 @@
 
     function createCardHTML(product) {
         const productJson  = encodeURIComponent(JSON.stringify(product));
+        // After inserting the image, set the wrapper's aspect ratio to the image's natural ratio
+        const img = cardElement.querySelector('.product-img-wrapper img');
+            img.onload = function() {
+            const wrapper = img.parentElement;
+            wrapper.style.aspectRatio = (img.naturalWidth / img.naturalHeight).toFixed(4);
+        };
         const featuredBadge = product.featured
             ? '<span class="featured-badge">Featured</span>'
             : '';
@@ -318,6 +324,7 @@
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
     });
+
 
     /* ============================================================
        8. PRICE CALCULATOR
